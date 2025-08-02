@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog].
 ### Internal
 
 - `@nestjs/swagger` package for Swagger integration (#7)
+- `drizzle-orm`, `pg`, `@types/pg`, `drizzle-kit` packages for database integration (#[2])
 
 <!-- Links -->
 
@@ -31,6 +32,7 @@ The format is based on [Keep a Changelog].
 
 [7]: https://github.com/i19n-io/backend/pull/7
 [6]: https://github.com/i19n-io/backend/pull/6
+[2]: https://github.com/i19n-io/backend/pull/2
 
 <!-- Links to versions -->
 
