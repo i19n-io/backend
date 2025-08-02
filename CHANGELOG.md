@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog].
 ### Added
 
 - `CHANGELOG.md` file ([CORE-5])
+- Swagger UI for API documentation ([CORE-3])
 
 ### Changed
 
@@ -20,6 +21,8 @@ The format is based on [Keep a Changelog].
 
 ### Internal
 
+- `@nestjs/swagger` package for Swagger integration ([CORE-3])
+
 <!-- Links -->
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.1.0
@@ -27,6 +30,7 @@ The format is based on [Keep a Changelog].
 <!-- Links to issues -->
 
 [CORE-5]: https://linear.app/govnotech/issue/CORE-5
+[CORE-3]: https://linear.app/govnotech/issue/CORE-3
 
 <!-- Links to versions -->
 
