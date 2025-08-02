@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog].
 
 - `CHANGELOG.md` file ([6])
 - Swagger UI for API documentation ([7])
+- PostgreSQL database integration via Drizzle ORM ([2])
 
 ### Changed
 
