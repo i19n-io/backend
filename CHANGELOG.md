@@ -22,8 +22,8 @@ The format is based on [Keep a Changelog].
 
 ### Internal
 
-- `@nestjs/swagger` package for Swagger integration (#7)
-- `drizzle-orm`, `pg`, `@types/pg`, `drizzle-kit` packages for database integration (#[2])
+- Added `@nestjs/swagger` package ([7])
+- Added `drizzle-orm`, `pg`, `@types/pg`, `drizzle-kit` packages ([2])
 
 <!-- Links -->
 
