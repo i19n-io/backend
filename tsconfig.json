@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "module": "CommonJS",
+    "target": "ESNext",
+
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "noFallthroughCasesInSwitch": true,
+    "removeComments": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+
+    "baseUrl": "./",
+    "outDir": "./dist",
+
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  }
+}

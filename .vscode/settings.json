@@ -1,0 +1,46 @@
+{
+  "editor.bracketPairColorization.enabled": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.guides.bracketPairs": true,
+  "editor.renderWhitespace": "trailing",
+  "editor.rulers": [80],
+  "eslint.validate": ["javascript", "typescript"],
+  "files.associations": {
+    ".env": "dotenv",
+    ".env.example": "dotenv"
+  },
+  "markdownlint.config": {
+    "MD024": { "siblings_only": true }
+  },
+  "search.exclude": {
+    "**/dist": true,
+    "package-lock.json": true
+  },
+  "todohighlight.isEnable": true,
+  "todohighlight.defaultStyle": {
+    "color": "white",
+    "backgroundColor": "#388e3c",
+    "overviewRulerColor": "#388e3c"
+  },
+  "todohighlight.keywords": [
+    "@todo",
+    {
+      "text": "TODO:",
+      "backgroundColor": "#388e3c",
+      "overviewRulerColor": "#388e3c"
+    },
+    {
+      "text": "FIXME:",
+      "backgroundColor": "#d50000",
+      "overviewRulerColor": "#d50000"
+    }
+  ],
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
