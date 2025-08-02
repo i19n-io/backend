@@ -1,0 +1,33 @@
+import type { INestApplication } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import {
+  DocumentBuilder,
+  SwaggerModule,
+  type SwaggerCustomOptions,
+} from '@nestjs/swagger'
+
+export const setupSwagger = (path: string, app: INestApplication) => {
+  const configService = app.get<ConfigService>(ConfigService)
+
+  const config = new DocumentBuilder()
+    .setOpenAPIVersion('3.1.1')
+    .setTitle('i19n — API')
+    .setDescription('<a href="json">JSON</a> | <a href="yaml">YAML</a>')
+    .setVersion(configService.get('version'))
+    .addTag('Other')
+    .build()
+
+  const document = SwaggerModule.createDocument(app, config)
+  const options: SwaggerCustomOptions = {
+    swaggerOptions: {
+      defaultModelsExpandDepth: 42,
+      defaultModelExpandDepth: 42,
+      defaultModelRendering: 'model',
+    },
+    customSiteTitle: config.info.title,
+    jsonDocumentUrl: `${path}/json`,
+    yamlDocumentUrl: `${path}/yaml`,
+  }
+
+  SwaggerModule.setup(`${path}/`, app, document, options)
+}

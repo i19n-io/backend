@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog].
 ### Added
 
 - `CHANGELOG.md` file ([CORE-5])
-- `@nestjs/swagger` package for Swagger integration ([CORE-3])
+- Swagger UI for API documentation ([CORE-3])
 
 ### Changed
 
@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog].
 ### Security
 
 ### Internal
+
+- `@nestjs/swagger` package for Swagger integration ([CORE-3])
 
 <!-- Links -->
 
