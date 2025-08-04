@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog].
 
 ### Added
 
-- `CHANGELOG.md` file ([6])
-- Swagger UI for API documentation ([7])
+- Swagger UI for API documentation ([1])
 - PostgreSQL database integration via Drizzle ORM ([2])
+- `CHANGELOG.md` file ([3])
 
 ### Changed
 
@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog].
 
 ### Internal
 
-- Added `@nestjs/swagger` package ([7])
+- Added `@nestjs/swagger` package ([1])
 - Added `drizzle-orm`, `pg`, `@types/pg`, `drizzle-kit` packages ([2])
 
 <!-- Links -->
@@ -31,9 +31,9 @@ The format is based on [Keep a Changelog].
 
 <!-- Links to pull requests -->
 
-[7]: https://github.com/i19n-io/backend/pull/7
-[6]: https://github.com/i19n-io/backend/pull/6
-[2]: https://github.com/i19n-io/backend/pull/2
+[3]: https://github.com/i19n-io/backend/issues/3
+[2]: https://github.com/i19n-io/backend/issues/2
+[1]: https://github.com/i19n-io/backend/issues/1
 
 <!-- Links to versions -->
 
