@@ -31,9 +31,9 @@ The format is based on [Keep a Changelog].
 
 <!-- Links to pull requests -->
 
-[3]: https://github.com/i19n-io/backend/issues/3
-[2]: https://github.com/i19n-io/backend/issues/2
-[1]: https://github.com/i19n-io/backend/issues/1
+[3]: https://github.com/i19n-io/backend/issues/3 'Add CHANGELOG.md'
+[2]: https://github.com/i19n-io/backend/issues/2 'Add database module'
+[1]: https://github.com/i19n-io/backend/issues/1 'Add Swagger'
 
 <!-- Links to versions -->
 
