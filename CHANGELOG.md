@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog].
 
 - Added `@nestjs/swagger` package ([1])
 - Added `drizzle-orm`, `pg`, `@types/pg`, `drizzle-kit` packages ([2])
+- Migrated to singular table names in database schema ([16], [15])
 
 <!-- Links -->
 
@@ -31,6 +32,8 @@ The format is based on [Keep a Changelog].
 
 <!-- Links to pull requests -->
 
+[16]: https://github.com/i19n-io/backend/issues/16 'Create schemas for language module'
+[15]: https://github.com/i19n-io/backend/issues/15 'Create language module'
 [3]: https://github.com/i19n-io/backend/issues/3 'Add CHANGELOG.md'
 [2]: https://github.com/i19n-io/backend/issues/2 'Add database module'
 [1]: https://github.com/i19n-io/backend/issues/1 'Add Swagger'
