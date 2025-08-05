@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog].
 - Added `@nestjs/swagger` package ([1])
 - Added `drizzle-orm`, `pg`, `@types/pg`, `drizzle-kit` packages ([2])
 - Migrated to singular table names in database schema ([16], [15])
+- Added `lang` table ([16], [15])
 
 <!-- Links -->
 
