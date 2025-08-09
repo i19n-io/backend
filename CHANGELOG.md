@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog].
 - `CHANGELOG.md` file ([6])
 - Swagger UI for API documentation ([7])
 - PostgreSQL database integration via Drizzle ORM ([2])
+- Set up `UserModule` and `UserService` with basic `create` method ([24])
 
 ### Changed
 
@@ -25,6 +26,7 @@ The format is based on [Keep a Changelog].
 - Added `@nestjs/swagger` package ([7])
 - Added `drizzle-orm`, `pg`, `@types/pg`, `drizzle-kit` packages ([2])
 - Added `eslint-plugin-jest`, `eslint-plugin-unicorn` packages ([24])
+- Added `class-transformer`, `class-validator` packages ([24])
 
 <!-- Links -->
 
