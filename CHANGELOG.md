@@ -6,12 +6,15 @@ The format is based on [Keep a Changelog].
 
 ### Added
 
-- `CHANGELOG.md` file ([6])
-- Swagger UI for API documentation ([7])
+- `CHANGELOG.md` file ([3])
+- Swagger UI for API documentation ([1])
 - PostgreSQL database integration via Drizzle ORM ([2])
-- Set up `UserModule` and `UserService` with basic `create` method ([24])
+- Set up `UserModule` and `UserService` with basic `create` method ([23])
+- Set up `AuthModule` and primitive authentication functionality ([25])
 
 ### Changed
+
+- Updates in `CHANGELOG.md` now contain links to issues rather than PRs ([25])
 
 ### Deprecated
 
@@ -23,21 +26,22 @@ The format is based on [Keep a Changelog].
 
 ### Internal
 
-- Added `@nestjs/swagger` package ([7])
+- Added `@nestjs/swagger` package ([1])
 - Added `drizzle-orm`, `pg`, `@types/pg`, `drizzle-kit` packages ([2])
-- Added `eslint-plugin-jest`, `eslint-plugin-unicorn` packages ([24])
-- Added `class-transformer`, `class-validator` packages ([24])
+- Added `eslint-plugin-jest`, `eslint-plugin-unicorn` packages ([23])
+- Added `class-transformer`, `class-validator` packages ([23])
 
 <!-- Links -->
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.1.0
 
-<!-- Links to pull requests -->
+<!-- Links to issues -->
 
-[24]: https://github.com/i19n-io/backend/pull/24
-[7]: https://github.com/i19n-io/backend/pull/7
-[6]: https://github.com/i19n-io/backend/pull/6
-[2]: https://github.com/i19n-io/backend/pull/2
+[25]: https://github.com/i19n-io/backend/issues/25
+[23]: https://github.com/i19n-io/backend/issues/23
+[3]: https://github.com/i19n-io/backend/issues/3
+[2]: https://github.com/i19n-io/backend/issues/2
+[1]: https://github.com/i19n-io/backend/issues/1
 
 <!-- Links to versions -->
 
