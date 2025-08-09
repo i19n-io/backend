@@ -19,6 +19,6 @@ describe(ConfigModule.name, () => {
   })
 
   it('NODE_ENV should be set to "test"', () => {
-    expect(configService.get('node.env')).toEqual('test')
+    expect(configService.get('node.env')).toBe('test')
   })
 })

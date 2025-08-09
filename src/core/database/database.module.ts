@@ -15,10 +15,10 @@ import * as schema from '~/core/database/schema'
 
 export class DatabaseModule extends ConfigurableModuleClass {
   static register(options: typeof OPTIONS_TYPE): DynamicModule {
-    const { providers = [], exports = [], ...props } = super.register(options)
+    const { providers = [], exports = [], ...rest } = super.register(options)
 
     return {
-      ...props,
+      ...rest,
       providers: [
         ...providers,
         {
@@ -37,11 +37,11 @@ export class DatabaseModule extends ConfigurableModuleClass {
     const {
       providers = [],
       exports = [],
-      ...props
+      ...rest
     } = super.registerAsync(options)
 
     return {
-      ...props,
+      ...rest,
       providers: [
         ...providers,
         {

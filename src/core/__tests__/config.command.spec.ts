@@ -13,7 +13,7 @@ describe(ConfigCommand.name, () => {
     }).compile()
 
     configCommand = module.get(ConfigCommand)
-    jest.spyOn(configCommand['logger'], 'log').mockImplementation(jest.fn)
+    jest.spyOn(configCommand['logger'], 'log').mockImplementation(jest.fn())
   })
 
   it('should log current config', () => {
