@@ -14,6 +14,9 @@ export const setupSwagger = (path: string, app: INestApplication) => {
     .setTitle('i19n — API')
     .setDescription('<a href="json">JSON</a> | <a href="yaml">YAML</a>')
     .setVersion(configService.get('version'))
+
+    .addTag('Auth')
+
     .addTag('Other')
     .build()
 

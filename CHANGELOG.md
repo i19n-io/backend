@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog].
 - Swagger UI for API documentation ([1])
 - PostgreSQL database integration via Drizzle ORM ([2])
 - Set up `UserModule` and `UserService` with basic `create` method ([23])
+- Set up `AuthModule` and primitive authentication functionality ([25])
 
 ### Changed
 
