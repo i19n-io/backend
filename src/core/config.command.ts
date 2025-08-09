@@ -11,9 +11,10 @@ import { config } from '~/core/config.module'
 })
 export class ConfigCommand extends CommandRunner {
   private readonly logger = {
-    log: (data: unknown) =>
+    log: (data: unknown) => {
       // eslint-disable-next-line no-console
-      console.log(inspect(data, { colors: true, depth: null })),
+      console.log(inspect(data, { colors: true, depth: Infinity }))
+    },
   }
 
   constructor(private readonly configService: ConfigService) {

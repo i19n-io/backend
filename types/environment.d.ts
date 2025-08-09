@@ -4,6 +4,7 @@
 
 declare global {
   namespace NodeJS {
+    // eslint-disable-next-line unicorn/prevent-abbreviations
     interface ProcessEnv {
       NODE_ENV: 'development' | 'test' | 'production'
 
@@ -18,4 +19,5 @@ declare global {
   }
 }
 
+// eslint-disable-next-line unicorn/require-module-specifiers
 export {}

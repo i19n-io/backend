@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog].
 
 - Added `@nestjs/swagger` package ([7])
 - Added `drizzle-orm`, `pg`, `@types/pg`, `drizzle-kit` packages ([2])
+- Added `eslint-plugin-jest`, `eslint-plugin-unicorn` packages ([24])
 
 <!-- Links -->
 
@@ -31,6 +32,7 @@ The format is based on [Keep a Changelog].
 
 <!-- Links to pull requests -->
 
+[24]: https://github.com/i19n-io/backend/pull/24
 [7]: https://github.com/i19n-io/backend/pull/7
 [6]: https://github.com/i19n-io/backend/pull/6
 [2]: https://github.com/i19n-io/backend/pull/2

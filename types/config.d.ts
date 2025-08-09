@@ -2,8 +2,10 @@ import type { Path, PathValue } from '@nestjs/config'
 
 import type { config } from '~/core/config.module'
 
+type Config = ReturnType<typeof config>
+
 declare module '@nestjs/config' {
-  export class ConfigService<K = ReturnType<typeof config>> {
-    get<T = K, P extends Path<T> = any, R = PathValue<T, P>>(propertyPath: P): R
+  export class ConfigService {
+    get<T = Config, P extends Path<T> = any>(propertyPath: P): PathValue<T, P>
   }
 }

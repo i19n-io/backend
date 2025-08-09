@@ -18,9 +18,11 @@ describe('PingController (e2e)', () => {
   })
 
   it('/ping (GET)', () => {
-    return request(app.getHttpServer())
+    request(app.getHttpServer())
       .get('/ping')
-      .expect(200)
-      .expect({ ping: 'pong' })
+      .end((_, response) => {
+        expect(response.statusCode).toBe(200)
+        expect(response.body).toEqual({ ping: 'pong' })
+      })
   })
 })

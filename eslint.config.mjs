@@ -5,8 +5,10 @@ import tsParser from '@typescript-eslint/parser'
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript'
 import consistentDefaultExportName from 'eslint-plugin-consistent-default-export-name'
 import { importX } from 'eslint-plugin-import-x'
+import pluginJest from 'eslint-plugin-jest'
 import nodeImport from 'eslint-plugin-node-import'
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+import pluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+import pluginUnicorn from 'eslint-plugin-unicorn'
 import globals from 'globals'
 import { fileURLToPath } from 'node:url'
 import tseslint from 'typescript-eslint'
@@ -21,8 +23,9 @@ export default tseslint.config(
     ignores: ['eslint.config.mjs'],
   },
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
+  ...tseslint.configs.strictTypeChecked,
+  pluginPrettierRecommended,
+  pluginUnicorn.configs.all,
   importX.flatConfigs.recommended,
   importX.flatConfigs.typescript,
   {
@@ -54,6 +57,21 @@ export default tseslint.config(
     },
   },
   {
+    files: ['**/*-spec.ts', '**/*.spec.ts'],
+    ...pluginJest.configs['flat/recommended'],
+    ...pluginJest.configs['flat/style'],
+    rules: {
+      ...pluginJest.configs['flat/recommended'].rules,
+      ...pluginJest.configs['flat/style'].rules,
+
+      // https://typescript-eslint.io/rules/unbound-method
+      '@typescript-eslint/unbound-method': 'off',
+      'jest/unbound-method': 'error',
+
+      'jest/valid-title': ['error', { ignoreTypeOfDescribeName: true }],
+    },
+  },
+  {
     files: ['**/*.{mjs,ts}'],
     languageOptions: { parser: tsParser },
     settings: {
@@ -69,6 +87,11 @@ export default tseslint.config(
           'newlines-between': 'always',
           'pathGroups': [
             {
+              pattern: '~/core/**',
+              group: 'internal',
+              position: 'before',
+            },
+            {
               pattern: '~/**',
               group: 'internal',
               position: 'before',
@@ -83,13 +106,36 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-exports': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-extraneous-class': [
+        'error',
+        { allowWithDecorator: true },
+      ],
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-import-type-side-effects': 'error',
       '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/no-unused-vars': isProduction ? 'error' : 'warn',
+      '@typescript-eslint/switch-exhaustiveness-check': [
+        'error',
+        {
+          allowDefaultCaseForExhaustiveSwitch: false,
+          requireDefaultForNonUnion: true,
+        },
+      ],
+
       'no-console': isProduction ? 'error' : 'warn',
       'no-debugger': isProduction ? 'error' : 'warn',
       'prefer-destructuring': ['error', { object: true }],
+
+      // https://github.com/sindresorhus/eslint-plugin-unicorn#rules
+      'unicorn/prefer-at': ['error', { checkAllIndexAccess: true }],
+      'unicorn/prevent-abbreviations': [
+        'error',
+        {
+          allowList: { db: true },
+          ignore: ['e2e'],
+        },
+      ],
+      'unicorn/switch-case-braces': 'off',
     },
   },
 )
