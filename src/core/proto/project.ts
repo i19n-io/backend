@@ -41,14 +41,15 @@ export class Project {
     ...d
   }: Omit<Project, 'authorId' | 'created' | 'updated' | 'deleted'> & {
     authorId: string | null
-    created: Date | string | null
-    updated: Date | string | null
+    created: Date | string
+    updated: Date | string
     deleted?: Date | string | null
   }) {
-    // To omit null values
+    // Omit null
     if (authorId) this.authorId = authorId
-    if (created) this.created = getDate(created)
-    if (updated) this.updated = getDate(updated)
+    this.created = getDate(created)
+    this.updated = getDate(updated)
+    // Omit null
     if (deleted) this.deleted = getDate(deleted)
 
     Object.assign(this, d)
