@@ -20,5 +20,4 @@ jobs:
       - name: Generate LOC graph
         uses: botforge-pro/loc-graph-action@main
         with:
-          theme: dark # 'dark' or 'light', default is 'light'
           date_format: '%d.%m.%y'
