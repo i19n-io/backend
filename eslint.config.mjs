@@ -125,6 +125,7 @@ export default tseslint.config(
       'no-console': isProduction ? 'error' : 'warn',
       'no-debugger': isProduction ? 'error' : 'warn',
       'prefer-destructuring': ['error', { object: true }],
+      'quotes': ['warn', 'single', { avoidEscape: true }],
 
       // https://github.com/sindresorhus/eslint-plugin-unicorn#rules
       'unicorn/prefer-at': ['error', { checkAllIndexAccess: true }],
