@@ -15,7 +15,8 @@
     ".env.example": "dotenv"
   },
   "markdownlint.config": {
-    "MD024": { "siblings_only": true }
+    "no-duplicate-heading": { "siblings_only": true },
+    "no-inline-html": { "allowed_elements": ["sub", "sup"] }
   },
   "search.exclude": {
     "**/dist": true,
