@@ -1,9 +1,8 @@
 name: LOC graph
 
 on:
-  push:
-    branches:
-      - dev
+  schedule:
+    - cron: '0 0 * * *' # Daily at midnight
   workflow_dispatch:
 
 permissions:
