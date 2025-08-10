@@ -8,13 +8,16 @@ import {
 
 const PONG = 'pong'
 
+/**
+ * @todo move to `core/proto`
+ */
 class PingResponse {
   @ApiProperty({ enum: [PONG] })
   ping = PONG
 }
 
-@ApiTags('Other')
 @Controller('ping')
+@ApiTags('Other')
 export class PingController {
   @Get()
   @ApiOperation({ summary: 'Ping the server' })

@@ -2,8 +2,8 @@ import { randomUUID } from 'node:crypto'
 
 import { Injectable } from '@nestjs/common'
 
-import { DatabaseService, type UserSelect, userTable } from '~/core/database'
-import type { UserCreate } from '~/core/proto/user-create'
+import { DatabaseService, userTable, type UserSelect } from '~/core/database'
+import type { UserCreate } from '~/core/proto'
 
 /**
  * @todo Use universal result error type
@@ -21,6 +21,9 @@ type UserCreateResult =
 export class UserService {
   constructor(private readonly db: DatabaseService) {}
 
+  /**
+   * @todo Return `User` model in `data`
+   */
   async create(dto: UserCreate): Promise<UserCreateResult> {
     const r = await this.db
       .insert(userTable)
