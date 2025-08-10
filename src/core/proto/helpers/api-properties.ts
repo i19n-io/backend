@@ -13,7 +13,7 @@ export const ApiPropertyLang = (options?: ApiPropertyOptions) =>
     IsLocale(),
     IsString(),
     IsNotEmpty(),
-    Length(2, 4),
+    Length(2, 64),
   )
 
 export const ApiPropertyUuid = (options?: ApiPropertyOptions) =>
