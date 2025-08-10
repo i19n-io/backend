@@ -8,7 +8,7 @@ import {
   InternalServerErrorException,
   Post,
 } from '@nestjs/common'
-import { ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { AuthSignUp } from '~/core/proto'
 
@@ -23,6 +23,7 @@ export class SignController {
    * @todo Add `Location` header
    */
   @Post('sign-up')
+  @ApiOperation({ summary: 'Sign up a new user' })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Account has been successfully created',
