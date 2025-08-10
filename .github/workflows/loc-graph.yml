@@ -1,0 +1,24 @@
+name: LOC graph
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-loc-graph:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate LOC graph
+        uses: botforge-pro/loc-graph-action@main
+        with:
+          theme: dark  # 'dark' or 'light', default is 'light'
