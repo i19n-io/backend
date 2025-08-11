@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, HttpStatus } from '@nestjs/common'
 import {
   ApiOperation,
   ApiProperty,
@@ -8,20 +8,20 @@ import {
 
 const PONG = 'pong'
 
+/**
+ * @todo move to `core/proto`
+ */
 class PingResponse {
   @ApiProperty({ enum: [PONG] })
   ping = PONG
 }
 
-@ApiTags('Other')
 @Controller('ping')
+@ApiTags('Other')
 export class PingController {
-  @ApiOperation({
-    summary: 'Ping the server',
-    description: 'Returns a simple response to check if the server is running.',
-  })
-  @ApiResponse({ status: 200, type: PingResponse })
   @Get()
+  @ApiOperation({ summary: 'Ping the server' })
+  @ApiResponse({ status: HttpStatus.OK, type: PingResponse })
   ping() {
     return new PingResponse()
   }

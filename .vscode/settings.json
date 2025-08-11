@@ -16,7 +16,7 @@
   },
   "markdownlint.config": {
     "no-duplicate-heading": { "siblings_only": true },
-    "no-inline-html": { "allowed_elements": ["sub", "sup"] }
+    "no-inline-html": { "allowed_elements": ["picture", "sub", "sup"] }
   },
   "search.exclude": {
     "**/dist": true,

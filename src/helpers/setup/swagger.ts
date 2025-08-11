@@ -6,6 +6,8 @@ import {
   type SwaggerCustomOptions,
 } from '@nestjs/swagger'
 
+import { PaginationQuery } from '~/core/proto'
+
 export const setupSwagger = (path: string, app: INestApplication) => {
   const configService = app.get<ConfigService>(ConfigService)
 
@@ -16,11 +18,15 @@ export const setupSwagger = (path: string, app: INestApplication) => {
     .setVersion(configService.get('version'))
 
     .addTag('Auth')
+    .addTag('Project')
 
     .addTag('Other')
     .build()
 
-  const document = SwaggerModule.createDocument(app, config)
+  const document = SwaggerModule.createDocument(app, config, {
+    extraModels: [PaginationQuery],
+  })
+
   const options: SwaggerCustomOptions = {
     swaggerOptions: {
       defaultModelsExpandDepth: 42,
