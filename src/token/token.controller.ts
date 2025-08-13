@@ -50,7 +50,7 @@ export class TokenController {
     const r = await this.tokenService.create(projectId, dto)
     if (r.ok) return r.data
 
-    throw new InternalServerErrorException('Failed to create project')
+    throw new InternalServerErrorException('Failed to create token')
   }
 
   @Get(':token_id')
