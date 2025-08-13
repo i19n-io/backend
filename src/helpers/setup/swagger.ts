@@ -14,7 +14,13 @@ export const setupSwagger = (path: string, app: INestApplication) => {
   const config = new DocumentBuilder()
     .setOpenAPIVersion('3.1.1')
     .setTitle('i19n — API')
-    .setDescription('<a href="json">JSON</a> | <a href="yaml">YAML</a>')
+    .setDescription(
+      [
+        '<a href="json">JSON</a> • <a href="yaml">YAML</a>',
+        '<br><br>',
+        'Use `ESC` key to reset the UI state',
+      ].join(''),
+    )
     .setVersion(configService.get('version'))
 
     .addTag('Auth')
@@ -34,6 +40,17 @@ export const setupSwagger = (path: string, app: INestApplication) => {
       defaultModelExpandDepth: 42,
       defaultModelRendering: 'model',
     },
+    customJsStr: `
+      // Escape key to reset the UI state
+      document.addEventListener('keydown', e => {
+        e = e || window.event
+        if (!('key' in e)) return
+        if (e.key === 'Escape' || e.key === 'Esc' || e.keyCode === 27) {
+          window.location.href = '#'
+          window.location.reload()
+        }
+      })
+    `,
     customSiteTitle: config.info.title,
     jsonDocumentUrl: `${path}/json`,
     yamlDocumentUrl: `${path}/yaml`,
