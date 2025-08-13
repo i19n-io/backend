@@ -13,7 +13,7 @@ import { ApiPropertyUuid } from '~/core/proto/helpers'
 
 export class TokenKeyCreate {
   @ApiPropertyUuid({ required: false })
-  @IsOptional()
+  @IsOptional() // FIXME: check for empty string!
   readonly parentId?: string
 
   /**
@@ -25,7 +25,7 @@ export class TokenKeyCreate {
     examples: ['login', 'buttonLabel', 'PageDocuments', 'title', 'common'],
   })
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty() // FIXME: length validation
   readonly key!: string
 
   // ===============================================
@@ -35,6 +35,7 @@ export class TokenKeyCreate {
   readonly position!: 'start' | 'end' | 'after'
 
   @ApiPropertyUuid({
+    required: false,
     description:
       'ID of the item to insert after. Required when `position: after`',
   })
