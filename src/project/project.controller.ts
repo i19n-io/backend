@@ -17,7 +17,7 @@ import { PaginationQuery, Project, ProjectCreate } from '~/core/proto'
 import { ProjectService } from '~/project/project.service'
 
 @Controller()
-@ApiTags('Project')
+@ApiTags('Projects')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
@@ -49,10 +49,10 @@ export class ProjectController {
     throw new InternalServerErrorException('Failed to create project')
   }
 
-  @Get(':id')
+  @Get(':project_id')
   @ApiResponse({ status: HttpStatus.OK, type: Project })
-  async get(@Param('id', ParseUUIDPipe) id: string) {
-    const r = await this.projectService.findOne(id)
+  async get(@Param('project_id', ParseUUIDPipe) projectId: string) {
+    const r = await this.projectService.findOne(projectId)
     if (r) return r
 
     throw new NotFoundException('Project not found')

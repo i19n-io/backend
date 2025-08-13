@@ -9,10 +9,9 @@ export const projectTable = pgTable(
     name: text().notNull(),
     // TODO: (lang) add reference to lang table
     defaultLang: text().notNull(),
-    authorId: uuid().references(() => userTable.id, { onDelete: 'restrict' }),
-    created: timestamp().defaultNow().notNull(),
-    updated: timestamp().defaultNow().notNull(),
-    deleted: timestamp(),
+    created: timestamp({ withTimezone: true }).defaultNow().notNull(),
+    updated: timestamp({ withTimezone: true }).defaultNow().notNull(),
+    deleted: timestamp({ withTimezone: true }),
   },
   t => [index().on(t.authorId)],
 )
