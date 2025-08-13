@@ -20,7 +20,8 @@
   },
   "search.exclude": {
     "**/dist": true,
-    "package-lock.json": true
+    "**/drizzle": true,
+    "**/package-lock.json": true
   },
   "todohighlight.isEnable": true,
   "todohighlight.defaultStyle": {
