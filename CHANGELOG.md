@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog].
 - Extra API model `PaginationQuery` ([29])
 - Set up `TokenModule` with basic create/read functionality ([34])
 - Set up `AccountModule` and `AccountService` with basic functionality ([49])
+- GitHub OAuth2 integration ([44])
 
 ### Changed
 
@@ -34,6 +35,8 @@ The format is based on [Keep a Changelog].
 - Added `drizzle-orm`, `pg`, `@types/pg`, `drizzle-kit` packages ([2])
 - Added `eslint-plugin-jest`, `eslint-plugin-unicorn` packages ([23])
 - Added `class-transformer`, `class-validator` packages ([23])
+- Added `@nestjs/passport`, `passport` packages ([44])
+- Added `passport-github`, `@types/passport-github` packages ([44])
 
 <!-- Links -->
 
@@ -42,6 +45,7 @@ The format is based on [Keep a Changelog].
 <!-- Links to issues -->
 
 [49]: https://github.com/i19n-io/backend/issues/49
+[44]: https://github.com/i19n-io/backend/issues/44
 [34]: https://github.com/i19n-io/backend/issues/34
 [29]: https://github.com/i19n-io/backend/issues/29
 [25]: https://github.com/i19n-io/backend/issues/25
