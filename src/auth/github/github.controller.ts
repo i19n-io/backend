@@ -1,6 +1,5 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import type { Request } from 'express'
 
 import { GithubGuard } from '~/auth/github/github.guard'
 
@@ -14,7 +13,7 @@ export class GithubController {
 
   // TODO: add swagger description
   @Get('callback')
-  githubCallback(@Req() request: Request) {
+  githubCallback(@Req() request: { user: unknown }) {
     // TODO: refactor
     return request.user
   }

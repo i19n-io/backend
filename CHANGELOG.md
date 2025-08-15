@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog].
 - Added `@nestjs/passport`, `passport` packages ([44])
 - Added `passport-github`, `@types/passport-github` packages ([44])
 - Added `@fastify/static`, `@nestjs/platform-fastify` packages ([52])
+- Migrated to Fastify as the HTTP provider ([52])
 
 <!-- Links -->
 
