@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog].
 - Set up `ProjectModule` with basic create/read functionality ([29])
 - Extra API model `PaginationQuery` ([29])
 - Set up `TokenModule` with basic create/read functionality ([34])
+- Set up `AccountModule` and `AccountService` with basic functionality ([49])
 
 ### Changed
 
@@ -40,6 +41,7 @@ The format is based on [Keep a Changelog].
 
 <!-- Links to issues -->
 
+[49]: https://github.com/i19n-io/backend/issues/49
 [34]: https://github.com/i19n-io/backend/issues/34
 [29]: https://github.com/i19n-io/backend/issues/29
 [25]: https://github.com/i19n-io/backend/issues/25
