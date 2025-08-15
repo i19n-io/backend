@@ -37,6 +37,8 @@ The format is based on [Keep a Changelog].
 - Added `class-transformer`, `class-validator` packages ([23])
 - Added `@nestjs/passport`, `passport` packages ([44])
 - Added `passport-github`, `@types/passport-github` packages ([44])
+- Added `@fastify/static`, `@nestjs/platform-fastify` packages ([52])
+- Migrated to Fastify as the HTTP provider ([52])
 
 <!-- Links -->
 
@@ -44,6 +46,7 @@ The format is based on [Keep a Changelog].
 
 <!-- Links to issues -->
 
+[52]: https://github.com/i19n-io/backend/issues/52
 [49]: https://github.com/i19n-io/backend/issues/49
 [44]: https://github.com/i19n-io/backend/issues/44
 [34]: https://github.com/i19n-io/backend/issues/34
