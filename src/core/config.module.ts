@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 
 import { ConfigModule } from '@nestjs/config'
 import * as Joi from 'joi'
+import type { Strategy } from 'passport-github'
 
 const { env } = process
 
@@ -24,6 +25,14 @@ export const config = () => ({
     user: env.DB_USER,
     password: env.DB_PASS,
   },
+
+  oauth: {
+    github: {
+      clientID: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
+      scope: ['read:user', 'user:email'],
+    } satisfies Strategy._StrategyOptionsBase,
+  },
 })
 
 export const configModule = ConfigModule.forRoot({
@@ -41,5 +50,8 @@ export const configModule = ConfigModule.forRoot({
     DB_NAME: Joi.string().required(),
     DB_USER: Joi.string().required(),
     DB_PASS: Joi.string().required(),
+
+    GITHUB_CLIENT_ID: Joi.string().required(),
+    GITHUB_CLIENT_SECRET: Joi.string().required(),
   }),
 })

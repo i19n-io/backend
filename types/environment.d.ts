@@ -15,6 +15,9 @@ declare global {
       DB_NAME: string
       DB_USER: string
       DB_PASS: string
+
+      GITHUB_CLIENT_ID: string
+      GITHUB_CLIENT_SECRET: string
     }
   }
 }
