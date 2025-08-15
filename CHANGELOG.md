@@ -39,6 +39,7 @@ The format is based on [Keep a Changelog].
 - Added `passport-github`, `@types/passport-github` packages ([44])
 - Added `@fastify/static`, `@nestjs/platform-fastify` packages ([52])
 - Migrated to Fastify as the HTTP provider ([52])
+- Removed `@nestjs/platform-express`, `@types/express` ([54])
 
 <!-- Links -->
 
@@ -46,6 +47,7 @@ The format is based on [Keep a Changelog].
 
 <!-- Links to issues -->
 
+[54]: https://github.com/i19n-io/backend/issues/54
 [52]: https://github.com/i19n-io/backend/issues/52
 [49]: https://github.com/i19n-io/backend/issues/49
 [44]: https://github.com/i19n-io/backend/issues/44
