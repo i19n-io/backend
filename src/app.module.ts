@@ -5,6 +5,7 @@ import { configModule } from '~/core/config.module'
 import { databaseModule } from '~/core/database/database.module'
 
 import { AuthModule } from '~/auth/auth.module'
+import { GithubModule } from '~/auth/github/github.module'
 import { OtherModule } from '~/other/other.module'
 import { ProjectModule } from '~/project/project.module'
 import { TokenModule } from '~/token/token.module'
@@ -22,7 +23,11 @@ import { UserModule } from '~/user/user.module'
     UserModule,
 
     RouterModule.register([
-      { path: 'auth', module: AuthModule },
+      {
+        path: 'auth',
+        module: AuthModule,
+        children: [{ path: 'github', module: GithubModule }],
+      },
       {
         path: 'projects',
         module: ProjectModule,

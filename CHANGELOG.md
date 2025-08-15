@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog].
 - Extra API model `PaginationQuery` ([29])
 - Set up `TokenModule` with basic create/read functionality ([34])
 - Set up `AccountModule` and `AccountService` with basic functionality ([49])
+- GitHub OAuth2 integration ([44])
 
 ### Changed
 
