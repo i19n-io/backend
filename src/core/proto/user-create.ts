@@ -5,9 +5,8 @@ import { USER_NAME_MAX_LENGTH, USER_NAME_PATTERN } from '~/core/proto/constants'
 
 export class UserCreate {
   /**
-   * @see
-   * - `USER_NAME_MAX_LENGTH`
-   * - `USER_NAME_PATTERN`
+   * @see `USER_NAME_MAX_LENGTH`
+   * @see `USER_NAME_PATTERN`
    */
   @ApiProperty({
     minLength: 1,

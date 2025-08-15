@@ -7,7 +7,6 @@ import {
   pgTable,
   text,
   unique,
-  uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core'
 
@@ -26,7 +25,7 @@ export const tokenKeyTable = pgTable(
   },
   t => [
     // Uniqueness constraints
-    uniqueIndex().on(t.projectId, t.parentId, t.key),
+    unique().on(t.projectId, t.parentId, t.key).nullsNotDistinct(),
 
     // Stable composite uniqueness for self-reference
     // unique('token_key_projectId_id_unique').on(t.projectId, t.id),

@@ -2,6 +2,9 @@ import type { DynamicModule } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { drizzle } from 'drizzle-orm/node-postgres'
 
+import { DatabaseService } from '~/core/database/database.service'
+import * as schema from '~/core/database/schema'
+
 import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN,
@@ -9,9 +12,6 @@ import {
   type DatabaseModuleOptions,
   type OPTIONS_TYPE,
 } from './database.definition'
-
-import { DatabaseService } from '~/core/database/database.service'
-import * as schema from '~/core/database/schema'
 
 export class DatabaseModule extends ConfigurableModuleClass {
   static register(options: typeof OPTIONS_TYPE): DynamicModule {

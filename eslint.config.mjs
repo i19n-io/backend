@@ -88,13 +88,13 @@ export default tseslint.config(
           'pathGroups': [
             {
               pattern: '~/core/**',
-              group: 'internal',
-              position: 'before',
+              group: 'external',
+              position: 'after',
             },
             {
               pattern: '~/**',
-              group: 'internal',
-              position: 'before',
+              group: 'external',
+              position: 'after',
             },
           ],
         },
@@ -124,6 +124,7 @@ export default tseslint.config(
 
       'no-console': isProduction ? 'error' : 'warn',
       'no-debugger': isProduction ? 'error' : 'warn',
+      'no-useless-return': 'error',
       'prefer-destructuring': ['error', { object: true }],
       'quotes': ['warn', 'single', { avoidEscape: true }],
 
