@@ -44,6 +44,5 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     })
 
     callback(undefined, account)
-    return
   }
 }
