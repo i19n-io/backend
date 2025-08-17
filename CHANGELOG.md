@@ -42,6 +42,8 @@ The format is based on [Keep a Changelog].
 - Removed `@nestjs/platform-express`, `@types/express` ([54])
 - Added `@nestjs/graphql`, `graphql` packages ([54])
 - Added `@nestjs/mercurius`, `mercurius` packages ([54])
+- Added `jiti` package for using TypeScript in ESLint config file ([54])
+- Migrated `eslint.config.mjs` → `eslint.config.ts` ([54])
 
 <!-- Links -->
 
