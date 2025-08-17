@@ -44,6 +44,7 @@ The format is based on [Keep a Changelog].
 - Added `@nestjs/mercurius`, `mercurius` packages ([54])
 - Added `jiti` package for using TypeScript in ESLint config file ([54])
 - Migrated `eslint.config.mjs` → `eslint.config.ts` ([54])
+- Migrated `.cspell.json` → `cspell.config.json` ([54])
 
 <!-- Links -->
 
