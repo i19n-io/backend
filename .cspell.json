@@ -3,5 +3,5 @@
   "version": "0.2",
   "language": "en",
   "files": ["*.md", "src/**/*.ts", "tests/**/*.ts", "types/**/*.d.ts"],
-  "words": ["srcset"]
+  "words": ["graphiql", "srcset"]
 }

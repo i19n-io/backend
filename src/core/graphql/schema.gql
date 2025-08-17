@@ -1,0 +1,67 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Account {
+  avatar: URL
+  created: DateTime!
+  deleted: DateTime
+  email: Email
+  githubId: String
+  githubUsername: String
+  id: UUID!
+  name: String!
+  updated: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""The `Email` custom scalar type represents a valid email address."""
+scalar Email @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
+
+type Mutation {
+  projectCreate(dto: ProjectCreate!): Project!
+  projectUpdate(dto: ProjectUpdate!, id: UUID!): Project!
+}
+
+input Pagination {
+  limit: Int! = 60
+  offset: Int! = 0
+}
+
+type Project {
+  author: Account!
+  authorId: UUID!
+  created: DateTime!
+  defaultLang: String!
+  deleted: DateTime
+  id: UUID!
+  name: String!
+  updated: DateTime!
+}
+
+input ProjectCreate {
+  authorId: String!
+  defaultLang: String!
+  name: String!
+}
+
+input ProjectUpdate {
+  authorId: String
+  defaultLang: String
+  name: String
+}
+
+type Query {
+  projectById(id: UUID!): Project!
+  projectList(pagination: Pagination! = {limit: 60, offset: 0}): [Project!]!
+}
+
+"""The `URL` custom scalar type represents a valid URL address."""
+scalar URL @specifiedBy(url: "https://tools.ietf.org/html/rfc3986")
+
+"""The `UUID` custom scalar type represents a valid UUID version 4."""
+scalar UUID @specifiedBy(url: "https://tools.ietf.org/html/rfc4122")

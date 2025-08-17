@@ -114,6 +114,10 @@ export default tseslint.config(
       '@typescript-eslint/no-import-type-side-effects': 'error',
       '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/no-unused-vars': isProduction ? 'error' : 'warn',
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        { allowNumber: true },
+      ],
       '@typescript-eslint/switch-exhaustiveness-check': [
         'error',
         {
@@ -129,6 +133,21 @@ export default tseslint.config(
       'quotes': ['warn', 'single', { avoidEscape: true }],
 
       // https://github.com/sindresorhus/eslint-plugin-unicorn#rules
+      'unicorn/import-style': [
+        'error',
+        {
+          styles: {
+            'node:path': {
+              default: false,
+              named: true,
+            },
+            'path': {
+              default: false,
+              named: true,
+            },
+          },
+        },
+      ],
       'unicorn/prefer-at': ['error', { checkAllIndexAccess: true }],
       'unicorn/prevent-abbreviations': [
         'error',

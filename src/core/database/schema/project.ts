@@ -1,7 +1,9 @@
-import { index, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { index, pgTable, text, uuid } from 'drizzle-orm/pg-core'
 
-import { userTable } from '~/core/database/schema/user'
+import { accountTable } from '~/core/database/schema/account'
+import { withTimestamps } from '~/core/database/utils'
 
+/** @todo Indexes for ordering */
 export const projectTable = pgTable(
   'project',
   {
@@ -9,9 +11,10 @@ export const projectTable = pgTable(
     name: text().notNull(),
     // TODO: (lang) add reference to lang table
     defaultLang: text().notNull(),
-    created: timestamp({ withTimezone: true }).defaultNow().notNull(),
-    updated: timestamp({ withTimezone: true }).defaultNow().notNull(),
-    deleted: timestamp({ withTimezone: true }),
+    authorId: uuid()
+      .references(() => accountTable.id, { onDelete: 'restrict' })
+      .notNull(),
+    ...withTimestamps,
   },
   t => [index().on(t.authorId)],
 )

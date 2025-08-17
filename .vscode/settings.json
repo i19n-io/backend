@@ -10,6 +10,12 @@
   "editor.renderWhitespace": "trailing",
   "editor.rulers": [80],
   "eslint.validate": ["javascript", "typescript"],
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "tsconfig.json": "tsconfig.*.json",
+    "package.json": "package-lock.json",
+    ".prettierrc": ".prettier*"
+  },
   "files.associations": {
     ".env": "dotenv",
     ".env.example": "dotenv"
@@ -21,7 +27,8 @@
   "search.exclude": {
     "**/dist": true,
     "**/drizzle": true,
-    "**/package-lock.json": true
+    "**/package-lock.json": true,
+    "**/schema.gql": true
   },
   "todohighlight.isEnable": true,
   "todohighlight.defaultStyle": {

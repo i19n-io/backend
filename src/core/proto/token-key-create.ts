@@ -8,7 +8,7 @@ import {
   ValidateIf,
 } from 'class-validator'
 
-import { TOKEN_KEY_MAX_LENGTH } from '~/core/proto/constants'
+import { TOKEN_KEY_MAX_LENGTH } from '~/core/constants'
 import { ApiPropertyUuid } from '~/core/proto/helpers'
 
 export class TokenKeyCreate {

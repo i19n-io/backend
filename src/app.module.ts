@@ -3,24 +3,22 @@ import { RouterModule } from '@nestjs/core'
 
 import { configModule } from '~/core/config.module'
 import { databaseModule } from '~/core/database/database.module'
+import { graphqlModule } from '~/core/graphql/graphql.module'
 
 import { AuthModule } from '~/auth/auth.module'
 import { GithubModule } from '~/auth/github/github.module'
-import { OtherModule } from '~/other/other.module'
 import { ProjectModule } from '~/project/project.module'
 import { TokenModule } from '~/token/token.module'
-import { UserModule } from '~/user/user.module'
 
 @Module({
   imports: [
     configModule,
     databaseModule,
+    graphqlModule,
 
     AuthModule,
-    OtherModule,
     ProjectModule,
     TokenModule,
-    UserModule,
 
     RouterModule.register([
       {
