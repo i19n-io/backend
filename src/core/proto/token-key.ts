@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { TOKEN_KEY_MAX_LENGTH } from '~/core/proto/constants'
+import { TOKEN_KEY_MAX_LENGTH } from '~/core/constants'
 import { ApiPropertyUuid } from '~/core/proto/helpers'
 
 export class TokenKey {

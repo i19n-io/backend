@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
 
 import { LIMIT_DEFAULT, LIMIT_MAX } from '~/core/constants'
@@ -6,27 +6,17 @@ import { LIMIT_DEFAULT, LIMIT_MAX } from '~/core/constants'
 import { TransformToInt } from '~/helpers/transformers'
 import { ValidateAsIntBetween } from '~/helpers/validators'
 
-export class PaginationQuery {
-  @ApiProperty({
-    type: 'integer',
-    required: false,
-    minimum: 1,
-    maximum: LIMIT_MAX,
-    default: LIMIT_DEFAULT,
-  })
+@InputType()
+export class Pagination {
+  @Field(() => Int, { defaultValue: LIMIT_DEFAULT })
   @TransformToInt()
   @IsOptional()
   @ValidateAsIntBetween(1, LIMIT_MAX)
-  readonly limit = LIMIT_DEFAULT
+  readonly limit: number = LIMIT_DEFAULT
 
-  @ApiProperty({
-    type: 'integer',
-    required: false,
-    minimum: 0,
-    default: 0,
-  })
+  @Field(() => Int, { defaultValue: 0 })
   @TransformToInt()
   @IsOptional()
   @ValidateAsIntBetween(0, Number.MAX_SAFE_INTEGER)
-  readonly offset = 0
+  readonly offset: number = 0
 }

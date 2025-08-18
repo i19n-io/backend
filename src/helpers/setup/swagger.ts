@@ -22,12 +22,8 @@ export const setupSwagger = (path: string, app: INestApplication) => {
       ].join(''),
     )
     .setVersion(configService.get('version'))
-
     .addTag('Auth')
-    .addTag('Projects')
     .addTag('Tokens')
-
-    .addTag('Other')
     .build()
 
   const document = SwaggerModule.createDocument(app, config, {

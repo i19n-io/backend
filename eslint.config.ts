@@ -1,26 +1,26 @@
-// @ts-check
 import { includeIgnoreFile } from '@eslint/compat'
-import eslint from '@eslint/js'
+import * as eslint from '@eslint/js'
 import tsParser from '@typescript-eslint/parser'
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript'
 import consistentDefaultExportName from 'eslint-plugin-consistent-default-export-name'
 import { importX } from 'eslint-plugin-import-x'
-import pluginJest from 'eslint-plugin-jest'
+import * as pluginJest from 'eslint-plugin-jest'
 import nodeImport from 'eslint-plugin-node-import'
 import pluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import pluginUnicorn from 'eslint-plugin-unicorn'
-import globals from 'globals'
-import { fileURLToPath } from 'node:url'
+import * as globals from 'globals'
+import { join } from 'node:path'
 import tseslint from 'typescript-eslint'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
-const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url))
-
 export default tseslint.config(
-  includeIgnoreFile(gitignorePath, 'Imported .gitignore patterns'),
+  includeIgnoreFile(
+    join(__dirname, '.gitignore'),
+    'Imported .gitignore patterns',
+  ),
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: ['eslint.config.ts'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
@@ -52,7 +52,7 @@ export default tseslint.config(
       sourceType: 'commonjs',
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        tsconfigRootDir: __dirname,
       },
     },
   },
@@ -64,7 +64,7 @@ export default tseslint.config(
       ...pluginJest.configs['flat/recommended'].rules,
       ...pluginJest.configs['flat/style'].rules,
 
-      // https://typescript-eslint.io/rules/unbound-method
+      // // https://typescript-eslint.io/rules/unbound-method
       '@typescript-eslint/unbound-method': 'off',
       'jest/unbound-method': 'error',
 
@@ -114,6 +114,10 @@ export default tseslint.config(
       '@typescript-eslint/no-import-type-side-effects': 'error',
       '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/no-unused-vars': isProduction ? 'error' : 'warn',
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        { allowNumber: true },
+      ],
       '@typescript-eslint/switch-exhaustiveness-check': [
         'error',
         {
@@ -129,6 +133,21 @@ export default tseslint.config(
       'quotes': ['warn', 'single', { avoidEscape: true }],
 
       // https://github.com/sindresorhus/eslint-plugin-unicorn#rules
+      'unicorn/import-style': [
+        'error',
+        {
+          styles: {
+            'node:path': {
+              default: false,
+              named: true,
+            },
+            'path': {
+              default: false,
+              named: true,
+            },
+          },
+        },
+      ],
       'unicorn/prefer-at': ['error', { checkAllIndexAccess: true }],
       'unicorn/prevent-abbreviations': [
         'error',
