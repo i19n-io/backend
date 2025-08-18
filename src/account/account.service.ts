@@ -1,4 +1,4 @@
-import { ok } from 'node:assert'
+import { ok } from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
 
 import { Injectable } from '@nestjs/common'
