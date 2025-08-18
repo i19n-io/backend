@@ -1,5 +1,5 @@
 import { isEmail } from 'class-validator'
-import { GraphQLScalarType } from 'graphql'
+import { GraphQLScalarType, Kind } from 'graphql'
 
 const validate = (v: unknown) => {
   if (isEmail(v)) return v
@@ -14,5 +14,8 @@ export const EmailScalar = new GraphQLScalarType({
   specifiedByURL:
     'https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address',
   parseValue: validate,
-  parseLiteral: validate,
+  parseLiteral: ast => {
+    if (ast.kind === Kind.STRING) return validate(ast.value)
+    throw new Error('Invalid email scalar type')
+  },
 })

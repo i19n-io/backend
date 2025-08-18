@@ -1,5 +1,5 @@
 import { isString, isURL } from 'class-validator'
-import { GraphQLScalarType } from 'graphql'
+import { GraphQLScalarType, Kind } from 'graphql'
 
 const validate = (v: unknown) => {
   if (isString(v) && isURL(v)) return v
@@ -12,5 +12,8 @@ export const UrlScalar = new GraphQLScalarType({
   description: 'The `URL` custom scalar type represents a valid URL address.',
   specifiedByURL: 'https://tools.ietf.org/html/rfc3986',
   parseValue: validate,
-  parseLiteral: validate,
+  parseLiteral: ast => {
+    if (ast.kind === Kind.STRING) return validate(ast.value)
+    throw new Error('Invalid URL scalar type')
+  },
 })
