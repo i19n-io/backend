@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common'
 
-import { TokenController } from '~/token/token.controller'
+import { TokenKeyResolver } from '~/token/token-key.resolver'
 import { TokenService } from '~/token/token.service'
 
 @Module({
-  controllers: [TokenController],
-  providers: [TokenService],
+  providers: [TokenKeyResolver, TokenService],
 })
 export class TokenModule {}

@@ -21,7 +21,6 @@ export const setupSwagger = (path: string, app: INestApplication) => {
     )
     .setVersion(configService.get('version'))
     .addTag('Auth')
-    .addTag('Tokens')
     .build()
 
   const document = SwaggerModule.createDocument(app, config)

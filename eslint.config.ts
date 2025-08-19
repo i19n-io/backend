@@ -148,6 +148,7 @@ export default tseslint.config(
           },
         },
       ],
+      'unicorn/no-nested-ternary': 'off',
       'unicorn/prefer-at': ['error', { checkAllIndexAccess: true }],
       'unicorn/prevent-abbreviations': [
         'error',

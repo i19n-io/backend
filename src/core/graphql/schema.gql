@@ -25,6 +25,7 @@ scalar Email @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.htm
 type Mutation {
   projectCreate(dto: ProjectCreate!): Project!
   projectUpdate(dto: ProjectUpdate!, id: UUID!): Project!
+  tokenKeyCreate(dto: TokenKeyCreate!, projectId: UUID!): TokenKey!
 }
 
 type Project {
@@ -53,6 +54,22 @@ input ProjectUpdate {
 type Query {
   projectById(id: UUID!): Project!
   projectList: [Project!]!
+  tokenKeyById(id: UUID!, projectId: UUID!): TokenKey
+  tokenKeyList(parentId: UUID, projectId: UUID!): [TokenKey!]!
+}
+
+type TokenKey {
+  id: UUID!
+  key: String!
+  parentId: UUID
+  projectId: UUID!
+}
+
+input TokenKeyCreate {
+  afterId: UUID
+  key: String!
+  parentId: UUID
+  position: String!
 }
 
 """The `URL` custom scalar type represents a valid URL address."""
