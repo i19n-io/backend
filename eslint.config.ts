@@ -113,7 +113,13 @@ export default tseslint.config(
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-import-type-side-effects': 'error',
       '@typescript-eslint/no-unsafe-argument': 'warn',
-      '@typescript-eslint/no-unused-vars': isProduction ? 'error' : 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        isProduction ? 'error' : 'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
       '@typescript-eslint/restrict-template-expressions': [
         'error',
         { allowNumber: true },

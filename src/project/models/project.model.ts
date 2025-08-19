@@ -32,17 +32,11 @@ export class Project {
   readonly deleted?: Date
 
   constructor({
-    created,
-    updated,
     deleted,
     ...rest
-  }: Omit<Project, 'created' | 'updated' | 'deleted'> & {
-    created: Date | string
-    updated: Date | string
-    deleted?: Date | string | null
+  }: Omit<Project, 'deleted'> & {
+    deleted?: Date | null
   }) {
-    this.created = toDate(created)
-    this.updated = toDate(updated)
     if (deleted) this.deleted = toDate(deleted)
 
     Object.assign(this, rest)

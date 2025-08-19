@@ -49,7 +49,7 @@ export class ProjectService {
       where: (t, { eq }) => eq(t.id, id),
     })
 
-    return r ? new Project(r) : undefined
+    if (r) return new Project(r)
   }
 
   async create(dto: ProjectCreate): Promise<ProjectCreateResult> {

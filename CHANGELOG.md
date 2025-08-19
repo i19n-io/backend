@@ -14,11 +14,12 @@ The format is based on [Keep a Changelog].
 - Set up `TokenModule` with basic create/read functionality ([34])
 - Set up `AccountModule` and `AccountService` with basic functionality ([49])
 - GitHub OAuth2 integration ([44])
-- GraphQL API integration ([54], [61])
+- GraphQL usage instead of REST ([54], [61])
 
 ### Changed
 
 - Updates in `CHANGELOG.md` now contain links to issues rather than PRs ([25])
+- Improved API exceptions ([66])
 
 ### Deprecated
 
@@ -53,6 +54,7 @@ The format is based on [Keep a Changelog].
 <!-- Links to issues -->
 
 [67]: https://github.com/i19n-io/backend/issues/67
+[66]: https://github.com/i19n-io/backend/issues/66
 [61]: https://github.com/i19n-io/backend/issues/61
 [54]: https://github.com/i19n-io/backend/issues/54
 [52]: https://github.com/i19n-io/backend/issues/52

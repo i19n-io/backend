@@ -1,4 +1,3 @@
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UUIDResolver } from 'graphql-scalars'
 
@@ -10,7 +9,7 @@ export class TokenKeyResolver {
   constructor(private readonly tokenService: TokenService) {}
 
   @Query(() => [TokenKey])
-  async tokenKeyList(
+  tokenKeyList(
     @Args('projectId', { type: () => UUIDResolver })
     projectId: string,
 
@@ -28,14 +27,11 @@ export class TokenKeyResolver {
   }
 
   @Query(() => TokenKey, { nullable: true })
-  async tokenKeyById(
+  tokenKeyById(
     @Args('projectId', { type: () => UUIDResolver }) projectId: string,
     @Args('id', { type: () => UUIDResolver }) id: string,
   ) {
-    const r = await this.tokenService.findOne(projectId, id)
-    if (r) return r
-
-    throw new NotFoundException('Token key not found')
+    return this.tokenService.findOne(projectId, id)
   }
 
   @Mutation(() => TokenKey)
@@ -45,7 +41,5 @@ export class TokenKeyResolver {
   ) {
     const r = await this.tokenService.create(projectId, dto)
     if (r.ok) return r.data
-
-    throw new InternalServerErrorException('Failed to create token')
   }
 }

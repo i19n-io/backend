@@ -41,34 +41,22 @@ export class Account {
     avatar,
     githubId,
     githubUsername,
-    created,
-    updated,
     deleted,
     ...rest
   }: Omit<
     Account,
-    | 'email'
-    | 'avatar'
-    | 'githubId'
-    | 'githubUsername'
-    | 'created'
-    | 'updated'
-    | 'deleted'
+    'email' | 'avatar' | 'githubId' | 'githubUsername' | 'deleted'
   > & {
     email?: string | null
     avatar?: string | null
     githubId?: string | null
     githubUsername?: string | null
-    created: Date | string
-    updated: Date | string
-    deleted?: Date | string | null
+    deleted?: Date | null
   }) {
     if (email) this.email = email
     if (avatar) this.avatar = avatar
     if (githubId) this.githubId = githubId
     if (githubUsername) this.githubUsername = githubUsername
-    this.created = toDate(created)
-    this.updated = toDate(updated)
     if (deleted) this.deleted = toDate(deleted)
 
     Object.assign(this, rest)
