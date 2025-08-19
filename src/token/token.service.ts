@@ -5,8 +5,8 @@ import { Injectable } from '@nestjs/common'
 import { sql, type SQL } from 'drizzle-orm'
 
 import { DatabaseService, tokenKeyTable } from '~/core/database'
-import { TokenKey, type TokenKeyListQuery } from '~/core/proto'
-import type { TokenKeyCreate } from '~/core/proto/token-key-create'
+
+import { TokenKey, type TokenKeyCreate } from '~/token/models'
 
 type Transaction = Parameters<Parameters<DatabaseService['transaction']>[0]>[0]
 
@@ -234,16 +234,25 @@ export async function insertTokenKey(
 export class TokenService {
   constructor(private readonly db: DatabaseService) {}
 
-  async findMany({ projectId, parentId, limit, offset }: TokenKeyListQuery) {
+  // TODO: implement pagination
+  async findMany({
+    projectId,
+    parentId,
+  }: {
+    projectId: string
+    parentId?: string | null
+  }) {
     const r = await this.db.query.tokenKeyTable.findMany({
       where: (t, { and, eq, isNull }) =>
         and(
           eq(t.projectId, projectId),
-          parentId ? eq(t.parentId, parentId) : isNull(t.parentId),
+          parentId
+            ? eq(t.parentId, parentId)
+            : parentId === null
+              ? isNull(t.parentId)
+              : undefined,
         ),
       orderBy: (t, { asc }) => [asc(t.sort), asc(t.id)],
-      limit,
-      offset,
     })
 
     return r.map(v => new TokenKey(v))

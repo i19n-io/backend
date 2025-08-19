@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common'
 import { eq } from 'drizzle-orm'
 
 import { DatabaseService, projectTable } from '~/core/database'
-import type { Pagination } from '~/core/graphql/extra'
 
 import {
   Project,
@@ -35,12 +34,11 @@ type ProjectUpdateResult =
 export class ProjectService {
   constructor(private readonly db: DatabaseService) {}
 
-  async findMany({ limit, offset }: Pagination) {
+  // TODO: implement pagination
+  async findMany() {
     const r = await this.db.query.projectTable.findMany({
       // TODO: implement ordering with indexes
       orderBy: (t, { desc }) => desc(t.created),
-      limit,
-      offset,
     })
 
     return r.map(v => new Project(v))

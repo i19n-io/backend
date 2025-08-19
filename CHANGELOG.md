@@ -11,11 +11,10 @@ The format is based on [Keep a Changelog].
 - PostgreSQL database integration via Drizzle ORM ([2])
 - Set up `AuthModule` and primitive authentication functionality ([25])
 - Set up `ProjectModule` with basic create/read functionality ([29])
-- Extra API model `PaginationQuery` ([29])
 - Set up `TokenModule` with basic create/read functionality ([34])
 - Set up `AccountModule` and `AccountService` with basic functionality ([49])
 - GitHub OAuth2 integration ([44])
-- GraphQL API integration ([54])
+- GraphQL API integration ([54], [61])
 
 ### Changed
 
@@ -52,6 +51,7 @@ The format is based on [Keep a Changelog].
 
 <!-- Links to issues -->
 
+[61]: https://github.com/i19n-io/backend/issues/61
 [54]: https://github.com/i19n-io/backend/issues/54
 [52]: https://github.com/i19n-io/backend/issues/52
 [49]: https://github.com/i19n-io/backend/issues/49

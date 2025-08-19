@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
-import { Pagination } from '~/core/graphql/extra'
 import { UuidScalar } from '~/core/graphql/scalars'
 
 import { Project, ProjectCreate, ProjectUpdate } from '~/project/models'
@@ -19,11 +18,8 @@ export class ProjectResolver {
   constructor(private readonly projectService: ProjectService) {}
 
   @Query(() => [Project])
-  async projectList(
-    @Args('pagination', { defaultValue: new Pagination() })
-    pagination: Pagination,
-  ) {
-    return await this.projectService.findMany(pagination)
+  projectList() {
+    return this.projectService.findMany()
   }
 
   @Query(() => Project)
