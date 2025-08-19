@@ -7,8 +7,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-
-import { UuidScalar } from '~/core/graphql/scalars'
+import { UUIDResolver } from 'graphql-scalars'
 
 import { Project, ProjectCreate, ProjectUpdate } from '~/project/models'
 import { ProjectService } from '~/project/project.service'
@@ -24,8 +23,7 @@ export class ProjectResolver {
 
   @Query(() => Project)
   async projectById(
-    // TODO: refactor UUID validation
-    @Args('id', { type: () => UuidScalar }, ParseUUIDPipe) id: string,
+    @Args('id', { type: () => UUIDResolver }, ParseUUIDPipe) id: string,
   ) {
     const r = await this.projectService.findOne(id)
     if (r) return r
@@ -48,8 +46,7 @@ export class ProjectResolver {
 
   @Mutation(() => Project)
   async projectUpdate(
-    // TODO: refactor UUID validation
-    @Args('id', { type: () => UuidScalar }, ParseUUIDPipe) id: string,
+    @Args('id', { type: () => UUIDResolver }, ParseUUIDPipe) id: string,
     @Args('dto') dto: ProjectUpdate,
   ) {
     const r = await this.projectService.update(id, dto)

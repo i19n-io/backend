@@ -6,7 +6,7 @@ type Account {
   avatar: URL
   created: DateTime!
   deleted: DateTime
-  email: Email
+  email: EmailAddress
   githubId: String
   githubUsername: String
   id: UUID!
@@ -19,8 +19,10 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-"""The `Email` custom scalar type represents a valid email address."""
-scalar Email @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
+"""
+A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
+"""
+scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
 type Mutation {
   projectCreate(dto: ProjectCreate!): Project!
@@ -72,8 +74,12 @@ input TokenKeyCreate {
   position: String!
 }
 
-"""The `URL` custom scalar type represents a valid URL address."""
-scalar URL @specifiedBy(url: "https://tools.ietf.org/html/rfc3986")
+"""
+A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.
+"""
+scalar URL
 
-"""The `UUID` custom scalar type represents a valid UUID version 4."""
-scalar UUID @specifiedBy(url: "https://tools.ietf.org/html/rfc4122")
+"""
+A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier.
+"""
+scalar UUID

@@ -1,21 +1,24 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
-import { EmailScalar, UrlScalar, UuidScalar } from '~/core/graphql/scalars'
+import {
+  EmailAddressResolver,
+  URLResolver,
+  UUIDResolver,
+} from 'graphql-scalars'
 
 import { toDate } from '~/helpers/to-date'
 
 @ObjectType()
 export class Account {
-  @Field(() => UuidScalar)
+  @Field(() => UUIDResolver)
   readonly id!: string
 
   @Field()
   readonly name!: string
 
-  @Field(() => EmailScalar, { nullable: true })
+  @Field(() => EmailAddressResolver, { nullable: true })
   readonly email?: string
 
-  @Field(() => UrlScalar, { nullable: true })
+  @Field(() => URLResolver, { nullable: true })
   readonly avatar?: string
 
   @Field({ nullable: true })

@@ -1,8 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator'
+import { UUIDResolver } from 'graphql-scalars'
 
 import { PROJECT_NAME_MAX_LENGTH } from '~/core/constants'
-import { UuidScalar } from '~/core/graphql/scalars'
 
 import { ValidateAsLang, ValidateAsUuid } from '~/helpers/validators'
 
@@ -23,7 +23,7 @@ export class ProjectCreate {
   @ValidateAsLang()
   readonly defaultLang!: string
 
-  @Field(() => UuidScalar)
+  @Field(() => UUIDResolver)
   @ValidateAsUuid()
   readonly authorId!: string
 }

@@ -44,6 +44,7 @@ The format is based on [Keep a Changelog].
 - Added `jiti` package for using TypeScript in ESLint config file ([54])
 - Migrated `eslint.config.mjs` → `eslint.config.ts` ([54])
 - Migrated `.cspell.json` → `cspell.config.json` ([54])
+- Added `graphql-scalars` package ([67])
 
 <!-- Links -->
 
@@ -51,6 +52,7 @@ The format is based on [Keep a Changelog].
 
 <!-- Links to issues -->
 
+[67]: https://github.com/i19n-io/backend/issues/67
 [61]: https://github.com/i19n-io/backend/issues/61
 [54]: https://github.com/i19n-io/backend/issues/54
 [52]: https://github.com/i19n-io/backend/issues/52

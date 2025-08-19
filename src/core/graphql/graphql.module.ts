@@ -25,11 +25,6 @@ export const graphqlModule = GraphQLModule.forRootAsync<MercuriusDriverConfig>({
       numberScalarMode: 'integer',
       addNewlineAtEnd: true,
     },
-    resolvers: {
-      Email: EmailScalar,
-      URL: UrlScalar,
-      UUID: UuidScalar,
-    },
     loaders: {
       Project: {
         // TODO: refactor, move away

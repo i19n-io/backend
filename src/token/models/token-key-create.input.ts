@@ -7,15 +7,15 @@ import {
   MaxLength,
   ValidateIf,
 } from 'class-validator'
+import { UUIDResolver } from 'graphql-scalars'
 
 import { TOKEN_KEY_MAX_LENGTH } from '~/core/constants'
-import { UuidScalar } from '~/core/graphql/scalars'
 
 import { ValidateAsUuid } from '~/helpers/validators'
 
 @InputType()
 export class TokenKeyCreate {
-  @Field(() => UuidScalar, { nullable: true })
+  @Field(() => UUIDResolver, { nullable: true })
   @IsOptional()
   @ValidateAsUuid()
   readonly parentId?: string
@@ -38,7 +38,7 @@ export class TokenKeyCreate {
   @IsEnum(['start', 'end', 'after'])
   readonly position!: 'start' | 'end' | 'after'
 
-  @Field(() => UuidScalar, { nullable: true })
+  @Field(() => UUIDResolver, { nullable: true })
   @ValidateIf((o: TokenKeyCreate) => o.position === 'after')
   @ValidateAsUuid()
   readonly afterId!: string
