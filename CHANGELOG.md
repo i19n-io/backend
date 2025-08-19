@@ -11,7 +11,6 @@ The format is based on [Keep a Changelog].
 - PostgreSQL database integration via Drizzle ORM ([2])
 - Set up `AuthModule` and primitive authentication functionality ([25])
 - Set up `ProjectModule` with basic create/read functionality ([29])
-- Extra API model `PaginationQuery` ([29])
 - Set up `TokenModule` with basic create/read functionality ([34])
 - Set up `AccountModule` and `AccountService` with basic functionality ([49])
 - GitHub OAuth2 integration ([44])

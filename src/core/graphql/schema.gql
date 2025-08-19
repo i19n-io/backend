@@ -27,11 +27,6 @@ type Mutation {
   projectUpdate(dto: ProjectUpdate!, id: UUID!): Project!
 }
 
-input Pagination {
-  limit: Int! = 60
-  offset: Int! = 0
-}
-
 type Project {
   author: Account!
   authorId: UUID!
@@ -57,7 +52,7 @@ input ProjectUpdate {
 
 type Query {
   projectById(id: UUID!): Project!
-  projectList(pagination: Pagination! = {limit: 60, offset: 0}): [Project!]!
+  projectList: [Project!]!
 }
 
 """The `URL` custom scalar type represents a valid URL address."""
