@@ -50,6 +50,7 @@ export class AccountService {
       })
     } else {
       const id = ids.at(0)
+      // TODO: send log to monitoring system
       ok(id, 'Account ID must be defined')
 
       r = await queryBuilder.findMany({

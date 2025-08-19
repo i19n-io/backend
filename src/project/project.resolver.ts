@@ -1,12 +1,8 @@
 import { equal } from 'node:assert/strict'
 
-import {
-  ConflictException,
-  InternalServerErrorException,
-  NotFoundException,
-  ParseUUIDPipe,
-} from '@nestjs/common'
+import { ParseUUIDPipe } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { GraphQLError } from 'graphql'
 import { UUIDResolver } from 'graphql-scalars'
 
 import { Project, ProjectCreate, ProjectUpdate } from '~/project/models'
@@ -21,14 +17,11 @@ export class ProjectResolver {
     return this.projectService.findMany()
   }
 
-  @Query(() => Project)
-  async projectById(
+  @Query(() => Project, { nullable: true })
+  projectById(
     @Args('id', { type: () => UUIDResolver }, ParseUUIDPipe) id: string,
   ) {
-    const r = await this.projectService.findOne(id)
-    if (r) return r
-
-    throw new NotFoundException('Project not found')
+    return this.projectService.findOne(id)
   }
 
   @Mutation(() => Project)
@@ -38,10 +31,23 @@ export class ProjectResolver {
 
     // Just to make sure it won't work when more values are added
     // TODO: remove when more values are added
-    equal(r.error, 'ALREADY_EXISTS', new InternalServerErrorException())
+    equal(
+      r.error,
+      'ALREADY_EXISTS',
+      // TODO: refactor, use universal error
+      new GraphQLError('Internal Server Error', {
+        extensions: {
+          code: 'INTERNAL_SERVER_ERROR',
+        },
+      }),
+    )
 
-    // TODO: use switch/case when more values are added
-    throw new ConflictException('Project already exists')
+    // TODO: refactor, use universal error
+    throw new GraphQLError('Project already exists', {
+      extensions: {
+        code: 'ALREADY_EXISTS',
+      },
+    })
   }
 
   @Mutation(() => Project)
@@ -54,9 +60,22 @@ export class ProjectResolver {
 
     // Just to make sure it won't work when more values are added
     // TODO: remove when more values are added
-    equal(r.error, 'NOT_FOUND', new InternalServerErrorException())
+    equal(
+      r.error,
+      'NOT_FOUND',
+      // TODO: refactor, use universal error
+      new GraphQLError('Internal Server Error', {
+        extensions: {
+          code: 'INTERNAL_SERVER_ERROR',
+        },
+      }),
+    )
 
-    // TODO: use switch/case when more values are added
-    throw new NotFoundException('Project not found')
+    // TODO: refactor, use universal error
+    throw new GraphQLError('Project not found', {
+      extensions: {
+        code: 'NOT_FOUND',
+      },
+    })
   }
 }

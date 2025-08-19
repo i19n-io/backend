@@ -18,9 +18,13 @@ export class Project {
   @Field(() => UUIDResolver)
   readonly authorId!: string
 
-  /** @todo Check and refactor field optionality */
+  /**
+   * The value is resolved at the GraphQL level and will always be `undefined`
+   * at the application level. That's why we use the `private` modifier here.
+   * @todo Add link to `author` field resolver
+   */
   @Field(() => Account)
-  readonly author?: Account
+  private readonly author!: Account
 
   @Field(() => Date)
   readonly created!: Date
@@ -32,17 +36,11 @@ export class Project {
   readonly deleted?: Date
 
   constructor({
-    created,
-    updated,
     deleted,
     ...rest
-  }: Omit<Project, 'created' | 'updated' | 'deleted'> & {
-    created: Date | string
-    updated: Date | string
-    deleted?: Date | string | null
+  }: Omit<Project, 'deleted'> & {
+    deleted?: Date | null
   }) {
-    this.created = toDate(created)
-    this.updated = toDate(updated)
     if (deleted) this.deleted = toDate(deleted)
 
     Object.assign(this, rest)

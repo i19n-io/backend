@@ -263,7 +263,7 @@ export class TokenService {
       where: (t, { and, eq }) => and(eq(t.id, id), eq(t.projectId, projectId)),
     })
 
-    return r ? new TokenKey(r) : undefined
+    if (r) return new TokenKey(r)
   }
 
   async create(

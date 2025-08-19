@@ -17,8 +17,7 @@ export class TokenKey {
 
   constructor({
     parentId,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    sort,
+    sort: _,
     ...rest
   }: Omit<TokenKey, 'parentId' | 'sort'> & {
     parentId?: string | null

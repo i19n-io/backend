@@ -1,11 +1,7 @@
 import { join } from 'node:path'
 
-import { HttpException, type HttpExceptionBody } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { MercuriusDriver, type MercuriusDriverConfig } from '@nestjs/mercurius'
-import { defaultErrorFormatter } from 'mercurius'
-
-import { EmailScalar, UrlScalar, UuidScalar } from '~/core/graphql/scalars'
 
 import { AccountModule } from '~/account/account.module'
 import { AccountService } from '~/account/account.service'
@@ -38,35 +34,6 @@ export const graphqlModule = GraphQLModule.forRootAsync<MercuriusDriverConfig>({
           return array.map(id => byId.get(id))
         },
       },
-    },
-    errorFormatter: (executionResult, context) => {
-      const formatted = defaultErrorFormatter(executionResult, context)
-
-      const orig = executionResult.errors.at(0)?.originalError
-
-      if (orig instanceof HttpException) {
-        const body = orig.getResponse() as HttpExceptionBody
-
-        formatted.statusCode = body.statusCode
-
-        formatted.response.errors = formatted.response.errors?.map(error => ({
-          message:
-            typeof body.message === 'string'
-              ? body.message
-              : (body.error ?? error.message),
-          http: {
-            code: body.statusCode,
-            error: body.error,
-            type: orig.name,
-          },
-          data: Array.isArray(body.message) ? body.message : undefined,
-          locations: error.locations,
-          path: error.path,
-          extensions: error.extensions,
-        }))
-      }
-
-      return formatted
     },
   }),
 })

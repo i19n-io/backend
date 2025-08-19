@@ -54,7 +54,7 @@ input ProjectUpdate {
 }
 
 type Query {
-  projectById(id: UUID!): Project!
+  projectById(id: UUID!): Project
   projectList: [Project!]!
   tokenKeyById(id: UUID!, projectId: UUID!): TokenKey
   tokenKeyList(parentId: UUID, projectId: UUID!): [TokenKey!]!
