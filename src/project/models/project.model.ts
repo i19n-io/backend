@@ -18,9 +18,8 @@ export class Project {
   @Field(() => UUIDResolver)
   readonly authorId!: string
 
-  /** @todo Check and refactor field optionality */
   @Field(() => Account)
-  readonly author?: Account
+  readonly author!: Account
 
   @Field(() => Date)
   readonly created!: Date
