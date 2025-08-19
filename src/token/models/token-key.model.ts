@@ -1,16 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
-import { UuidScalar } from '~/core/graphql/scalars'
+import { UUIDResolver } from 'graphql-scalars'
 
 @ObjectType()
 export class TokenKey {
-  @Field(() => UuidScalar)
+  @Field(() => UUIDResolver)
   readonly id!: string
 
-  @Field(() => UuidScalar)
+  @Field(() => UUIDResolver)
   readonly projectId!: string
 
-  @Field(() => UuidScalar, { nullable: true })
+  @Field(() => UUIDResolver, { nullable: true })
   readonly parentId?: string
 
   @Field()

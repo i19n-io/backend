@@ -1,13 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
-import { UuidScalar } from '~/core/graphql/scalars'
+import { UUIDResolver } from 'graphql-scalars'
 
 import { Account } from '~/account/models'
 import { toDate } from '~/helpers/to-date'
 
 @ObjectType()
 export class Project {
-  @Field(() => UuidScalar)
+  @Field(() => UUIDResolver)
   readonly id!: string
 
   @Field()
@@ -16,7 +15,7 @@ export class Project {
   @Field()
   readonly defaultLang!: string
 
-  @Field(() => UuidScalar)
+  @Field(() => UUIDResolver)
   readonly authorId!: string
 
   /** @todo Check and refactor field optionality */
