@@ -44,13 +44,13 @@ type Project {
 }
 
 input ProjectCreate {
-  authorId: String!
+  authorId: UUID!
   defaultLang: String!
   name: String!
 }
 
 input ProjectUpdate {
-  authorId: String
+  authorId: UUID
   defaultLang: String
   name: String
 }
