@@ -46,6 +46,8 @@ The format is based on [Keep a Changelog].
 - Migrated `eslint.config.mjs` → `eslint.config.ts` ([54])
 - Migrated `.cspell.json` → `cspell.config.json` ([54])
 - Added `graphql-scalars` package ([67])
+- Added `vitest`, `@vitest/coverage-v8`, `@vitest/ui` packages ([76])
+- Migrated from Jest to Vitest ([76])
 
 <!-- Links -->
 
@@ -53,6 +55,7 @@ The format is based on [Keep a Changelog].
 
 <!-- Links to issues -->
 
+[76]: https://github.com/i19n-io/backend/issues/76
 [67]: https://github.com/i19n-io/backend/issues/67
 [66]: https://github.com/i19n-io/backend/issues/66
 [61]: https://github.com/i19n-io/backend/issues/61
