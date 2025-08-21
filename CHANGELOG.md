@@ -47,6 +47,7 @@ The format is based on [Keep a Changelog].
 - Migrated `.cspell.json` → `cspell.config.json` ([54])
 - Added `graphql-scalars` package ([67])
 - Added `vitest`, `@vitest/coverage-v8`, `@vitest/ui` packages ([76])
+- Migrated from Jest to Vitest ([76])
 
 <!-- Links -->
 

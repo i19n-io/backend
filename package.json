@@ -23,10 +23,11 @@
     "fix:code": "npm run check:code -- --fix",
     "fix:format": "npm run check:format -- --write",
     "fix:spelling:unused": "npm run check:spelling:unused -- --fix",
-    "test": "run-s --continue-on-error test:{unit:cov,e2e}",
-    "test:e2e": "jest --config tests/jest.config.ts",
-    "test:unit": "jest --no-cache",
-    "test:unit:cov": "jest --coverage"
+    "test": "run-s --continue-on-error test:{unit:coverage,e2e}",
+    "test:e2e": "vitest run --dir tests",
+    "test:unit": "vitest run --dir src",
+    "test:unit:coverage": "vitest run --dir src --coverage",
+    "test:unit:ui": "vitest --dir src --coverage --ui"
   },
   "dependencies": {
     "@fastify/static": "^8.2.0",
