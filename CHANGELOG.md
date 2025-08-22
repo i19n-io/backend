@@ -49,7 +49,8 @@ The format is based on [Keep a Changelog].
 - Added `vitest`, `@vitest/coverage-v8`, `@vitest/ui` packages ([76])
 - Migrated from Jest to Vitest ([76])
 - Added `@testcontainers/postgresql`, `@vitest/eslint-plugin` packages ([41])
-- Added `e2e` for project create and update use cases ([41])
+- Added `e2e` tests for project mutations and queries ([41])
+- Added `e2e` tests for token key mutations and queries ([35])
 
 <!-- Links -->
 
@@ -66,6 +67,7 @@ The format is based on [Keep a Changelog].
 [49]: https://github.com/i19n-io/backend/issues/49
 [44]: https://github.com/i19n-io/backend/issues/44
 [41]: https://github.com/i19n-io/backend/issues/41
+[35]: https://github.com/i19n-io/backend/issues/35
 [34]: https://github.com/i19n-io/backend/issues/34
 [29]: https://github.com/i19n-io/backend/issues/29
 [25]: https://github.com/i19n-io/backend/issues/25

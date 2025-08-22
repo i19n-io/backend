@@ -41,5 +41,5 @@ export class TokenKeyCreate {
   @Field(() => UUIDResolver, { nullable: true })
   @ValidateIf((o: TokenKeyCreate) => o.position === 'after')
   @ValidateAsUuid()
-  readonly afterId!: string
+  readonly afterId?: string
 }
