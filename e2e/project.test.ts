@@ -44,9 +44,9 @@ describe('Project', () => {
       }
 
       const r = await projectCreate(app, dto)
-      const json = r.json()
+      expect(r.raw.statusCode).toBe(200)
 
-      expect(json).toEqual({
+      expect(r.parsed).toEqual({
         data: {
           projectCreate: {
             id: expect.any(String),
@@ -63,7 +63,7 @@ describe('Project', () => {
         },
       })
 
-      const { created, updated } = json.data.projectCreate
+      const { created, updated } = r.parsed.data.projectCreate
       expect(updated).toBe(created)
     })
   })
@@ -77,9 +77,7 @@ describe('Project', () => {
       }
 
       const rCreate = await projectCreate(app, dtoCreate)
-      const jsonCreate = rCreate.json()
-
-      const createdId = jsonCreate.data.projectCreate.id as string
+      expect(rCreate.raw.statusCode).toBe(200)
 
       const dtoUpdate: ProjectUpdate = {
         name: 'My updated project',
@@ -87,10 +85,11 @@ describe('Project', () => {
         // TODO: authorId
       }
 
+      const createdId = rCreate.parsed.data.projectCreate.id
       const r = await projectUpdate(app, createdId, dtoUpdate)
-      const json = r.json()
+      expect(r.raw.statusCode).toBe(200)
 
-      expect(json).toEqual({
+      expect(r.parsed).toEqual({
         data: {
           projectUpdate: {
             id: createdId,
@@ -107,7 +106,7 @@ describe('Project', () => {
         },
       })
 
-      const { created, updated } = json.data.projectUpdate
+      const { created, updated } = r.parsed.data.projectUpdate
       expect(updated).not.toBe(created)
     })
   })
