@@ -23,11 +23,13 @@
     "fix:code": "npm run check:code -- --fix",
     "fix:format": "npm run check:format -- --write",
     "fix:spelling:unused": "npm run check:spelling:unused -- --fix",
-    "test": "run-s --continue-on-error test:{unit:coverage,e2e}",
-    "test:e2e": "vitest run --dir tests",
-    "test:unit": "vitest run --dir src",
-    "test:unit:coverage": "vitest run --dir src --coverage",
-    "test:unit:ui": "vitest --dir src --coverage --ui"
+    "test": "vitest",
+    "test:ui": "vitest --ui --coverage",
+    "test:e2e": "vitest run --project e2e",
+    "test:e2e:ui": "vitest --project e2e --ui",
+    "test:unit": "vitest --project unit",
+    "test:unit:ui": "vitest --project unit --ui --coverage",
+    "test:unit:coverage": "vitest --project unit --coverage"
   },
   "dependencies": {
     "@fastify/static": "^8.2.0",

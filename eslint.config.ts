@@ -1,10 +1,10 @@
 import { includeIgnoreFile } from '@eslint/compat'
 import * as eslint from '@eslint/js'
 import tsParser from '@typescript-eslint/parser'
+import * as vitest from '@vitest/eslint-plugin'
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript'
 import consistentDefaultExportName from 'eslint-plugin-consistent-default-export-name'
 import { importX } from 'eslint-plugin-import-x'
-import * as pluginJest from 'eslint-plugin-jest'
 import nodeImport from 'eslint-plugin-node-import'
 import pluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import pluginUnicorn from 'eslint-plugin-unicorn'
@@ -57,18 +57,14 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*-spec.ts', '**/*.spec.ts'],
-    ...pluginJest.configs['flat/recommended'],
-    ...pluginJest.configs['flat/style'],
+    files: ['**/*.test.ts'],
+    plugins: { vitest },
     rules: {
-      ...pluginJest.configs['flat/recommended'].rules,
-      ...pluginJest.configs['flat/style'].rules,
-
-      // // https://typescript-eslint.io/rules/unbound-method
-      '@typescript-eslint/unbound-method': 'off',
-      'jest/unbound-method': 'error',
-
-      'jest/valid-title': ['error', { ignoreTypeOfDescribeName: true }],
+      ...vitest.configs.recommended.rules,
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      'unicorn/no-null': 'off',
+      'vitest/valid-title': ['error', { ignoreTypeOfDescribeName: true }],
     },
   },
   {
@@ -90,6 +86,11 @@ export default tseslint.config(
               pattern: '~/core/**',
               group: 'external',
               position: 'after',
+            },
+            {
+              pattern: '~/e2e/**',
+              group: 'internal',
+              position: 'before',
             },
             {
               pattern: '~/**',
