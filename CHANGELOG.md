@@ -48,6 +48,7 @@ The format is based on [Keep a Changelog].
 - Added `graphql-scalars` package ([67])
 - Added `vitest`, `@vitest/coverage-v8`, `@vitest/ui` packages ([76])
 - Migrated from Jest to Vitest ([76])
+- Added `@testcontainers/postgresql`, `@vitest/eslint-plugin` packages ([41])
 
 <!-- Links -->
 
@@ -63,6 +64,7 @@ The format is based on [Keep a Changelog].
 [52]: https://github.com/i19n-io/backend/issues/52
 [49]: https://github.com/i19n-io/backend/issues/49
 [44]: https://github.com/i19n-io/backend/issues/44
+[41]: https://github.com/i19n-io/backend/issues/41
 [34]: https://github.com/i19n-io/backend/issues/34
 [29]: https://github.com/i19n-io/backend/issues/29
 [25]: https://github.com/i19n-io/backend/issues/25
