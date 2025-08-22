@@ -49,6 +49,7 @@ The format is based on [Keep a Changelog].
 - Added `vitest`, `@vitest/coverage-v8`, `@vitest/ui` packages ([76])
 - Migrated from Jest to Vitest ([76])
 - Added `@testcontainers/postgresql`, `@vitest/eslint-plugin` packages ([41])
+- Added `e2e` for project creation ([41])
 
 <!-- Links -->
 
