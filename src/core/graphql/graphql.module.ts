@@ -24,6 +24,7 @@ export const graphqlModule = GraphQLModule.forRootAsync<MercuriusDriverConfig>({
     loaders: {
       Project: {
         // TODO: refactor, move away
+        // TODO: optimize when requested only `id` (`authorId` → `author.id`)
         author: async (queries: LoaderQuery<Project>[]) => {
           const array = queries.map(q => q.obj.authorId)
           const uniqueSet = new Set(array)

@@ -28,6 +28,7 @@ type Mutation {
   projectCreate(dto: ProjectCreate!): Project!
   projectUpdate(dto: ProjectUpdate!, id: UUID!): Project!
   tokenKeyCreate(dto: TokenKeyCreate!, projectId: UUID!): TokenKey!
+  tokenValueCreate(dto: TokenValueCreate!, keyId: UUID!): TokenValue!
 }
 
 type Project {
@@ -58,6 +59,9 @@ type Query {
   projectList: [Project!]!
   tokenKeyById(id: UUID!, projectId: UUID!): TokenKey
   tokenKeyList(parentId: UUID, projectId: UUID!): [TokenKey!]!
+  tokenValue(keyId: UUID!, lang: String!): TokenValue
+  tokenValueById(id: UUID!): TokenValue
+  tokenValueList(keyId: UUID!, langs: [String!]): [TokenValue!]!
 }
 
 type TokenKey {
@@ -72,6 +76,18 @@ input TokenKeyCreate {
   key: String!
   parentId: UUID
   position: String!
+}
+
+type TokenValue {
+  id: UUID!
+  keyId: UUID!
+  lang: String!
+  value: String!
+}
+
+input TokenValueCreate {
+  lang: String!
+  value: String!
 }
 
 """
