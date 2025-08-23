@@ -27,9 +27,8 @@ import { TokenModule } from '~/token/token.module'
         children: [{ path: 'github', module: GithubModule }],
       },
       {
-        path: 'projects',
-        module: ProjectModule,
-        children: [{ path: ':project_id/tokens', module: TokenModule }],
+        path: 'tokens',
+        module: TokenModule,
       },
     ]),
   ],
