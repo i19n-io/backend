@@ -6,7 +6,7 @@ import { AccountService } from '~/account/account.service'
 import type { Account } from '~/account/models'
 import { AppModule } from '~/app.module'
 import { setupFastifyAdapter } from '~/helpers/setup/fastify-adapter'
-import type { ProjectCreate, ProjectUpdate } from '~/project/models'
+import type { Project, ProjectCreate, ProjectUpdate } from '~/project/models'
 
 import { projectCreate, projectUpdate } from '~/e2e/helpers'
 
@@ -44,9 +44,9 @@ describe('Project', () => {
       }
 
       const r = await projectCreate(app, dto)
-      const json = r.json()
+      expect(r.raw.statusCode).toBe(200)
 
-      expect(json).toEqual({
+      expect(r.parsed).toEqual({
         data: {
           projectCreate: {
             id: expect.any(String),
@@ -63,7 +63,7 @@ describe('Project', () => {
         },
       })
 
-      const { created, updated } = json.data.projectCreate
+      const { created, updated } = r.parsed.data.projectCreate
       expect(updated).toBe(created)
     })
   })
@@ -77,9 +77,7 @@ describe('Project', () => {
       }
 
       const rCreate = await projectCreate(app, dtoCreate)
-      const jsonCreate = rCreate.json()
-
-      const createdId = jsonCreate.data.projectCreate.id as string
+      expect(rCreate.raw.statusCode).toBe(200)
 
       const dtoUpdate: ProjectUpdate = {
         name: 'My updated project',
@@ -87,10 +85,11 @@ describe('Project', () => {
         // TODO: authorId
       }
 
+      const createdId = rCreate.parsed.data.projectCreate.id
       const r = await projectUpdate(app, createdId, dtoUpdate)
-      const json = r.json()
+      expect(r.raw.statusCode).toBe(200)
 
-      expect(json).toEqual({
+      expect(r.parsed).toEqual({
         data: {
           projectUpdate: {
             id: createdId,
@@ -107,8 +106,101 @@ describe('Project', () => {
         },
       })
 
-      const { created, updated } = json.data.projectUpdate
+      const { created, updated } = r.parsed.data.projectUpdate
       expect(updated).not.toBe(created)
+    })
+  })
+
+  describe('Query', () => {
+    test('ok list', async () => {
+      const dtoList: ProjectCreate[] = Array.from({ length: 3 }).map(
+        (_, index) => ({
+          name: `My project ${index + 1}`,
+          defaultLang: index % 2 === 0 ? 'en' : 'en-GB',
+          authorId: account.id,
+        }),
+      )
+
+      const list: Project[] = []
+
+      for (const dto of dtoList) {
+        const r = await projectCreate(app, dto)
+        expect(r.raw.statusCode).toBe(200)
+        list.push(r.parsed.data.projectCreate)
+      }
+
+      for (const [index, json] of list.entries()) {
+        expect(json).toEqual({
+          id: expect.any(String),
+          name: dtoList.at(index)?.name,
+          defaultLang: dtoList.at(index)?.defaultLang,
+          author: {
+            id: account.id,
+            name: account.name,
+          },
+          created: expect.any(String),
+          updated: expect.any(String),
+          deleted: null,
+        })
+      }
+    })
+
+    test('ok by ID', async () => {
+      const dtoCreate: ProjectCreate = {
+        name: 'My original project',
+        defaultLang: 'en',
+        authorId: account.id,
+      }
+
+      const rCreate = await projectCreate(app, dtoCreate)
+      expect(rCreate.raw.statusCode).toBe(200)
+
+      const createdId = rCreate.parsed.data.projectCreate.id
+
+      const r = await app.inject({
+        method: 'POST',
+        url: '/gql',
+        body: {
+          query: `
+            query ProjectById ($id: UUID!) {
+              projectById (id: $id) {
+                id
+                name
+                defaultLang
+                author {
+                  id
+                  name
+                }
+                created
+                updated
+                deleted
+              }
+            }
+          `,
+          variables: { id: createdId },
+        },
+      })
+
+      expect(r.statusCode).toBe(200)
+
+      const json = r.json()
+
+      expect(json).toEqual({
+        data: {
+          projectById: {
+            id: createdId,
+            name: dtoCreate.name,
+            defaultLang: dtoCreate.defaultLang,
+            author: {
+              id: account.id,
+              name: account.name,
+            },
+            created: expect.any(String),
+            updated: expect.any(String),
+            deleted: null,
+          },
+        },
+      })
     })
   })
 })

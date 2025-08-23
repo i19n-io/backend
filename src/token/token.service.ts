@@ -5,6 +5,12 @@ import { Injectable } from '@nestjs/common'
 import { sql, type SQL } from 'drizzle-orm'
 
 import { DatabaseService, tokenKeyTable } from '~/core/database'
+import {
+  isGapTooSmall,
+  midExpr,
+  sortExprEnd,
+  sortExprStart,
+} from '~/core/database/utils/sort'
 
 import { TokenKey, type TokenKeyCreate } from '~/token/models'
 
@@ -23,44 +29,6 @@ const siblingsWhere = (projectId: string, parentId?: string) => {
   `
 }
 
-/** (coalesce(MIN(sort), 1)) / 2 */
-const startSortExpr = (projectId: string, parentId?: string) => {
-  const minSubq = sql`
-    (SELECT MIN(${tokenKeyTable.sort})
-     FROM ${tokenKeyTable}
-     WHERE ${siblingsWhere(projectId, parentId)})
-  `
-  return sql`(COALESCE(${minSubq}, 1))::numeric / 2`
-}
-
-/** (coalesce(MAX(sort), 0) + 1) / 2 */
-const endSortExpr = (projectId: string, parentId?: string) => {
-  const maxSubq = sql`
-    (SELECT MAX(${tokenKeyTable.sort})
-     FROM ${tokenKeyTable}
-     WHERE ${siblingsWhere(projectId, parentId)})
-  `
-  return sql`(COALESCE(${maxSubq}, 0) + 1)::numeric / 2`
-}
-
-/** center between two numeric strings */
-const mid = (a: string, b: string) =>
-  sql`(${sql.raw(a)} + ${sql.raw(b)})::numeric / 2`
-
-/** is gap too small? (default 1e-12 for scale=12) */
-const isGapTooSmall = async (
-  tx: Transaction,
-  lo: string,
-  hi: string,
-  minGap = sql<number>`1e-12`,
-) => {
-  const [r] = await tx
-    .select({ ok: sql<boolean>`${sql.raw(hi)} - ${sql.raw(lo)} > ${minGap}` })
-    .from(tokenKeyTable)
-    .limit(1)
-  return !r.ok
-}
-
 /** EN: locally "stretch" the interval [lo, hi] to free up space */
 const ensureGapOrRebalance = async (
   tx: Transaction,
@@ -75,7 +43,7 @@ const ensureGapOrRebalance = async (
 ) => {
   const { projectId, parentId, lo, hi, minGap, window } = parameters
 
-  const gapTooSmall = await isGapTooSmall(tx, lo, hi, minGap)
+  const gapTooSmall = await isGapTooSmall(tx, tokenKeyTable, lo, hi, minGap)
   if (!gapTooSmall) return
 
   const rows = await tx
@@ -122,23 +90,19 @@ export async function insertTokenKey(
 ) {
   const { parentId, key, position } = dto
 
-  if (position === 'start') {
-    const [row] = await db
-      .insert(tokenKeyTable)
-      .values({
-        id: randomUUID(),
-        projectId,
-        parentId,
-        key,
-        sort: startSortExpr(projectId, parentId),
-      })
-      .onConflictDoNothing()
-      .returning()
-
-    return row
+  let sort: SQL<number> | undefined
+  switch (position) {
+    case 'start':
+      sort = sortExprStart(tokenKeyTable, siblingsWhere(projectId, parentId))
+      break
+    case 'end':
+      sort = sortExprEnd(tokenKeyTable, siblingsWhere(projectId, parentId))
+      break
+    case 'after':
+      break
   }
 
-  if (position === 'end') {
+  if (sort) {
     const [row] = await db
       .insert(tokenKeyTable)
       .values({
@@ -146,7 +110,7 @@ export async function insertTokenKey(
         projectId,
         parentId,
         key,
-        sort: endSortExpr(projectId, parentId),
+        sort,
       })
       .onConflictDoNothing()
       .returning()
@@ -221,7 +185,7 @@ export async function insertTokenKey(
         projectId,
         parentId,
         key,
-        sort: mid(current.sort, next.sort),
+        sort: midExpr(current.sort, next.sort),
       })
       .onConflictDoNothing()
       .returning()

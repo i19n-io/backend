@@ -1,15 +1,15 @@
 import type { NestFastifyApplication } from '@nestjs/platform-fastify'
 
-import type { ProjectUpdate } from '~/project/models'
+import type { Project, ProjectUpdate } from '~/project/models'
 
 import { gql } from '~/e2e/helpers/gql'
 
-export const projectUpdate = (
+export const projectUpdate = async (
   app: NestFastifyApplication,
   id: string,
   dto: ProjectUpdate,
-) =>
-  app.inject({
+) => {
+  const r = await app.inject({
     method: 'POST',
     url: '/gql',
     body: gql(
@@ -35,3 +35,15 @@ export const projectUpdate = (
       },
     ),
   })
+
+  const parsed: {
+    data: {
+      projectUpdate: Project
+    }
+  } = r.json()
+
+  return {
+    parsed,
+    raw: r,
+  }
+}

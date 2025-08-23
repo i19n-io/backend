@@ -1,34 +1,30 @@
 import type { NestFastifyApplication } from '@nestjs/platform-fastify'
 
-import type { Project, ProjectCreate } from '~/project/models'
+import type { TokenKey, TokenKeyCreate } from '~/token/models'
 
 import { gql } from '~/e2e/helpers/gql'
 
-export const projectCreate = async (
+export const tokenKeyCreate = async (
   app: NestFastifyApplication,
-  dto: ProjectCreate,
+  projectId: string,
+  dto: TokenKeyCreate,
 ) => {
   const r = await app.inject({
     method: 'POST',
     url: '/gql',
     body: gql(
       `
-        mutation ProjectCreate ($dto: ProjectCreate!) {
-          projectCreate(dto: $dto) {
+        mutation TokenKeyCreate ($projectId: UUID!, $dto: TokenKeyCreate!) {
+          tokenKeyCreate(projectId: $projectId, dto: $dto) {
             id
-            name
-            defaultLang
-            author {
-              id
-              name
-            }
-            created
-            updated
-            deleted
+            projectId
+            parentId
+            key
           }
         }
       `,
       {
+        projectId,
         dto,
       },
     ),
@@ -36,7 +32,7 @@ export const projectCreate = async (
 
   const parsed: {
     data: {
-      projectCreate: Project
+      tokenKeyCreate: TokenKey
     }
   } = r.json()
 
