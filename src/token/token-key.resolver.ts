@@ -2,11 +2,11 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UUIDResolver } from 'graphql-scalars'
 
 import { TokenKey, TokenKeyCreate } from '~/token/models'
-import { TokenService } from '~/token/token.service'
+import { TokenKeyService } from '~/token/token-key.service'
 
 @Resolver(() => TokenKey)
 export class TokenKeyResolver {
-  constructor(private readonly tokenService: TokenService) {}
+  constructor(private readonly tokenKeyService: TokenKeyService) {}
 
   @Query(() => [TokenKey])
   tokenKeyList(
@@ -20,7 +20,7 @@ export class TokenKeyResolver {
     })
     parentId?: string | null,
   ) {
-    return this.tokenService.findMany({
+    return this.tokenKeyService.findMany({
       projectId,
       parentId,
     })
@@ -31,7 +31,7 @@ export class TokenKeyResolver {
     @Args('projectId', { type: () => UUIDResolver }) projectId: string,
     @Args('id', { type: () => UUIDResolver }) id: string,
   ) {
-    return this.tokenService.findOne(projectId, id)
+    return this.tokenKeyService.findOne(projectId, id)
   }
 
   @Mutation(() => TokenKey)
@@ -39,7 +39,7 @@ export class TokenKeyResolver {
     @Args('projectId', { type: () => UUIDResolver }) projectId: string,
     @Args('dto') dto: TokenKeyCreate,
   ) {
-    const r = await this.tokenService.create(projectId, dto)
+    const r = await this.tokenKeyService.create(projectId, dto)
     if (r.ok) return r.data
   }
 }

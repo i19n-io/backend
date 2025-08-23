@@ -12,7 +12,7 @@ import type { TokenKey, TokenKeyCreate } from '~/token/models'
 
 import { tokenKeyCreate } from '~/e2e/helpers'
 
-describe('Token', () => {
+describe('TokenKey', () => {
   let app: NestFastifyApplication
   let account: Account
   let project: Project
@@ -41,7 +41,7 @@ describe('Token', () => {
     const projectService = app.get(ProjectService)
 
     const rProject = await projectService.create({
-      name: 'My project with tokens',
+      name: 'My project with token keys',
       defaultLang: 'en',
       authorId: account.id,
     })

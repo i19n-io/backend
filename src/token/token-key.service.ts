@@ -195,7 +195,7 @@ export async function insertTokenKey(
 }
 
 @Injectable()
-export class TokenService {
+export class TokenKeyService {
   constructor(private readonly db: DatabaseService) {}
 
   // TODO: implement pagination

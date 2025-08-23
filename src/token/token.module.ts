@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 
 import { TokenKeyResolver } from '~/token/token-key.resolver'
-import { TokenService } from '~/token/token.service'
+import { TokenKeyService } from '~/token/token-key.service'
 
 @Module({
-  providers: [TokenKeyResolver, TokenService],
+  providers: [TokenKeyResolver, TokenKeyService],
 })
 export class TokenModule {}
