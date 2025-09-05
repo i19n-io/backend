@@ -98,17 +98,17 @@
     "vitest": "^3.2.4"
   },
   "engines": {
-    "node": "^22",
-    "npm": "^10"
+    "node": "^24",
+    "npm": "^11"
   },
   "devEngines": {
     "runtime": {
       "name": "node",
-      "version": "^22"
+      "version": "^24"
     },
     "packageManager": {
       "name": "npm",
-      "version": "^10"
+      "version": "^11"
     }
   }
 }
