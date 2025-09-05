@@ -2,6 +2,6 @@
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/master/cspell.schema.json",
   "version": "0.2",
   "language": "en",
-  "files": ["*.md", "src/**/*.ts", "tests/**/*.ts", "types/**/*.d.ts"],
+  "files": ["*.md", "e2e/**/*.ts", "src/**/*.ts", "types/**/*.d.ts"],
   "words": ["graphiql", "srcset"]
 }
