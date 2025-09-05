@@ -14,7 +14,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "check": "run-p --continue-on-error check:*",
-    "check:code": "eslint . --ext .mjs,.ts --max-warnings 0",
+    "check:code": "eslint . --ext .ts --max-warnings 0",
     "check:format": "prettier . --check",
     "check:spelling": "cspell lint",
     "check:spelling-unused": "cspell-check-unused-words",
