@@ -83,7 +83,7 @@
     "eslint-plugin-node-import": "^1.0.5",
     "eslint-plugin-prettier": "^5.2.2",
     "eslint-plugin-unicorn": "^60.0.0",
-    "globals": "^16.0.0",
+    "globals": "^16.4.0",
     "jiti": "^2.5.1",
     "npm-run-all2": "^8.0.4",
     "prettier": "^3.4.2",
@@ -93,7 +93,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.42.0",
+    "typescript-eslint": "^8.43.0",
     "unplugin-swc": "^1.5.7",
     "vitest": "^3.2.4"
   },
