@@ -257,4 +257,187 @@ describe('Project (REST)', () => {
       expect(r.statusCode).toBe(400)
     })
   })
+
+  describe('PATCH /projects/:id', () => {
+    test('200 with full update and embedded author', async () => {
+      const project = await makeProject(app, {
+        name: 'before-full',
+        defaultLang: 'en',
+        authorId: account.id,
+      })
+
+      const r = await app.inject({
+        method: 'PATCH',
+        url: `/projects/${project.id}`,
+        payload: { name: 'after-full', defaultLang: 'fr' },
+      })
+
+      expect(r.statusCode).toBe(200)
+      expect(r.json()).toEqual(
+        expect.objectContaining({
+          id: project.id,
+          name: 'after-full',
+          defaultLang: 'fr',
+          authorId: account.id,
+          author: expect.objectContaining({ id: account.id }),
+        }),
+      )
+    })
+
+    test('200 with partial update (only name)', async () => {
+      const project = await makeProject(app, {
+        name: 'partial-before',
+        defaultLang: 'en',
+        authorId: account.id,
+      })
+
+      const r = await app.inject({
+        method: 'PATCH',
+        url: `/projects/${project.id}`,
+        payload: { name: 'partial-after' },
+      })
+
+      expect(r.statusCode).toBe(200)
+      const body = r.json<Project>()
+      expect(body.name).toBe('partial-after')
+      expect(body.defaultLang).toBe('en')
+    })
+
+    test('200 on no-op update (same values)', async () => {
+      const project = await makeProject(app, {
+        name: 'noop',
+        defaultLang: 'en',
+        authorId: account.id,
+      })
+
+      const r = await app.inject({
+        method: 'PATCH',
+        url: `/projects/${project.id}`,
+        payload: { name: 'noop' },
+      })
+
+      expect(r.statusCode).toBe(200)
+      expect(r.json<Project>().name).toBe('noop')
+    })
+
+    test('200 when changing authorId to another existing account', async () => {
+      const project = await makeProject(app, {
+        name: 'reassign',
+        defaultLang: 'en',
+        authorId: account.id,
+      })
+      const replacementAuthor = await makeAccount(app, { name: 'New Author' })
+
+      const r = await app.inject({
+        method: 'PATCH',
+        url: `/projects/${project.id}`,
+        payload: { authorId: replacementAuthor.id },
+      })
+
+      expect(r.statusCode).toBe(200)
+      expect(r.json<Project>().authorId).toBe(replacementAuthor.id)
+      expect(r.json<Project>().author.id).toBe(replacementAuthor.id)
+    })
+
+    test('200 with empty body returns project unchanged', async () => {
+      const project = await makeProject(app, {
+        name: 'empty-body',
+        defaultLang: 'en',
+        authorId: account.id,
+      })
+
+      const r = await app.inject({
+        method: 'PATCH',
+        url: `/projects/${project.id}`,
+        payload: {},
+      })
+
+      expect(r.statusCode).toBe(200)
+      expect(r.json<Project>().name).toBe('empty-body')
+    })
+
+    test('404 when project does not exist', async () => {
+      const r = await app.inject({
+        method: 'PATCH',
+        url: `/projects/${randomUUID()}`,
+        payload: { name: 'whatever' },
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('404 when new authorId does not exist', async () => {
+      const project = await makeProject(app, {
+        name: 'reassign-bad',
+        defaultLang: 'en',
+        authorId: account.id,
+      })
+
+      const r = await app.inject({
+        method: 'PATCH',
+        url: `/projects/${project.id}`,
+        payload: { authorId: randomUUID() },
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('400 when id is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'PATCH',
+        url: '/projects/not-a-uuid',
+        payload: { name: 'whatever' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when name is empty', async () => {
+      const project = await makeProject(app, {
+        name: 'will-not-empty',
+        defaultLang: 'en',
+        authorId: account.id,
+      })
+
+      const r = await app.inject({
+        method: 'PATCH',
+        url: `/projects/${project.id}`,
+        payload: { name: '' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when defaultLang is invalid', async () => {
+      const project = await makeProject(app, {
+        name: 'will-not-bad-lang',
+        defaultLang: 'en',
+        authorId: account.id,
+      })
+
+      const r = await app.inject({
+        method: 'PATCH',
+        url: `/projects/${project.id}`,
+        payload: { defaultLang: 'not_a_locale!' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when authorId is not a UUID', async () => {
+      const project = await makeProject(app, {
+        name: 'will-not-bad-author',
+        defaultLang: 'en',
+        authorId: account.id,
+      })
+
+      const r = await app.inject({
+        method: 'PATCH',
+        url: `/projects/${project.id}`,
+        payload: { authorId: 'not-a-uuid' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+  })
 })

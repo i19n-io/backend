@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
 } from '@nestjs/common'
 import {
@@ -17,7 +18,7 @@ import {
 } from '@nestjs/swagger'
 
 import { AccountService } from '~/account/account.service'
-import { Project, ProjectCreate } from '~/project/models'
+import { Project, ProjectCreate, ProjectUpdate } from '~/project/models'
 import { ProjectService } from '~/project/project.service'
 
 @Controller('projects')
@@ -56,5 +57,23 @@ export class ProjectController {
     if (!r.ok) throw new ConflictException('Project already exists')
 
     return r.data
+  }
+
+  @Patch(':id')
+  @ApiOkResponse({ type: Project })
+  @ApiNotFoundResponse({ description: 'Project or new author not found' })
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ProjectUpdate,
+  ): Promise<Project> {
+    if (dto.authorId) {
+      const author = await this.accountService.findOneById(dto.authorId)
+      if (!author) throw new NotFoundException('Author not found')
+    }
+
+    const r = await this.projectService.update(id, dto)
+    if (r.ok) return r.data
+
+    throw new NotFoundException('Project not found')
   }
 }
