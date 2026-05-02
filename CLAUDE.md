@@ -33,8 +33,14 @@ final cleanup step.
 
 ### REST conventions (target style)
 
-- Resourceful URLs, plural nouns. Nested under parent when ownership is
-  natural: `/projects/:projectId/keys`, `/token-keys/:keyId/values`.
+- Resourceful URLs, plural nouns, kebab-case. Resource names match entities:
+  `/projects`, `/token-keys`, `/token-values`. Nested under parent when
+  ownership is natural: `/projects/:projectId/token-keys`,
+  `/token-keys/:keyId/values`.
+- The existing `GET /tokens?project=&key=&lang=&format=` is a consumer
+  read-only endpoint (compiled tree/flat output), not CRUD over a `Token`
+  entity — it stays on `/tokens` and is unrelated to the `/token-*`
+  resource routes added by the migration.
 - Verbs: `GET` list / `GET` by id / `POST` create / `PATCH` partial update.
 - Validation through `class-validator` DTOs + global `ValidationPipe`
   (already configured in `src/helpers/setup/validation.ts`).
@@ -101,9 +107,9 @@ REST endpoint paths are proposals; finalize per step with the user.
 | 2 | TokenValue reads | `tokenValueList` | `GET /token-keys/:keyId/values?langs=…` |
 | 3 | TokenValue reads | `tokenValue` | `GET /token-keys/:keyId/values/:lang` |
 | 4 | TokenValue write | `tokenValueCreate` | `POST /token-keys/:keyId/values` |
-| 5 | TokenKey reads | `tokenKeyList` | `GET /projects/:projectId/keys?parentId=…` |
-| 6 | TokenKey reads | `tokenKeyById` | `GET /projects/:projectId/keys/:id` |
-| 7 | TokenKey write | `tokenKeyCreate` | `POST /projects/:projectId/keys` |
+| 5 | TokenKey reads | `tokenKeyList` | `GET /projects/:projectId/token-keys?parentId=…` |
+| 6 | TokenKey reads | `tokenKeyById` | `GET /projects/:projectId/token-keys/:id` |
+| 7 | TokenKey write | `tokenKeyCreate` | `POST /projects/:projectId/token-keys` |
 | 8 | Project reads | `projectList` | `GET /projects` |
 | 9 | Project reads | `projectById` | `GET /projects/:id` |
 | 10 | Project writes | `projectCreate` | `POST /projects` |
