@@ -1,15 +1,26 @@
 import {
+  BadRequestException,
+  Body,
+  ConflictException,
   Controller,
   Get,
   NotFoundException,
   Param,
   ParseUUIDPipe,
+  Post,
   Query,
 } from '@nestjs/common'
-import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import { ProjectService } from '~/project/project.service'
-import { TokenKey, TokenKeyListQuery } from '~/token/models'
+import { TokenKey, TokenKeyCreate, TokenKeyListQuery } from '~/token/models'
 import { TokenKeyService } from '~/token/token-key.service'
 
 @Controller()
@@ -44,5 +55,45 @@ export class TokenKeyController {
     if (!tokenKey) throw new NotFoundException('Token key not found in project')
 
     return tokenKey
+  }
+
+  @Post('projects/:projectId/token-keys')
+  @ApiCreatedResponse({ type: TokenKey })
+  @ApiNotFoundResponse({ description: 'Project or parent key not found' })
+  @ApiConflictResponse({
+    description: 'A key with this name already exists at this parent level',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid body, or `afterId` does not match a sibling',
+  })
+  async create(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Body() dto: TokenKeyCreate,
+  ): Promise<TokenKey> {
+    const project = await this.projectService.findOne(projectId)
+    if (!project) throw new NotFoundException('Project not found')
+
+    if (dto.parentId) {
+      const parent = await this.tokenKeyService.findOne(projectId, dto.parentId)
+      if (!parent) {
+        throw new NotFoundException('Parent token key not found in project')
+      }
+    }
+
+    const r = await this.tokenKeyService.create(projectId, dto)
+    if (r.ok) return r.data
+
+    switch (r.error) {
+      case 'ALREADY_EXISTS': {
+        throw new ConflictException(
+          'Token key with this name already exists at this parent level',
+        )
+      }
+      case 'AFTER_ID_NOT_FOUND': {
+        throw new BadRequestException(
+          '`afterId` is not a sibling under the requested parent',
+        )
+      }
+    }
   }
 }

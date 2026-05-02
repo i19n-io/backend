@@ -16,10 +16,15 @@ import { TokenKey, type TokenKeyCreate } from '~/token/models'
 
 type Transaction = Parameters<Parameters<DatabaseService['transaction']>[0]>[0]
 
-/**
- * @todo Use universal result type
- */
-type TokenKeyCreateResult = { ok: true; data: TokenKey } | { ok: false }
+/** @todo Use universal result error type */
+type TokenKeyCreateError = 'ALREADY_EXISTS' | 'AFTER_ID_NOT_FOUND'
+
+/** @todo Use universal result type */
+type TokenKeyCreateResult =
+  | { ok: true; data: TokenKey }
+  | { ok: false; error: TokenKeyCreateError }
+
+const AFTER_ID_NOT_FOUND_MESSAGE = '`afterId` not found'
 
 /** WHERE project_id = ? AND (parent_id = ? | IS NULL) */
 const siblingsWhere = (projectId: string, parentId?: string) => {
@@ -137,7 +142,7 @@ export async function insertTokenKey(
       .limit(1)
 
     const current = currentResult.at(0)
-    if (!current) throw new Error('`afterId` not found')
+    if (!current) throw new Error(AFTER_ID_NOT_FOUND_MESSAGE)
 
     const nextResult = await tx
       .select({ id: tokenKeyTable.id, sort: tokenKeyTable.sort })
@@ -242,8 +247,19 @@ export class TokenKeyService {
     projectId: string,
     dto: TokenKeyCreate,
   ): Promise<TokenKeyCreateResult> {
-    const data = await insertTokenKey(this.db, projectId, dto)
+    try {
+      const data = await insertTokenKey(this.db, projectId, dto)
+      if (!data) return { ok: false, error: 'ALREADY_EXISTS' }
 
-    return data ? { ok: true, data: new TokenKey(data) } : { ok: false }
+      return { ok: true, data: new TokenKey(data) }
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === AFTER_ID_NOT_FOUND_MESSAGE
+      ) {
+        return { ok: false, error: 'AFTER_ID_NOT_FOUND' }
+      }
+      throw error
+    }
   }
 }

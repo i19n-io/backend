@@ -225,4 +225,244 @@ describe('TokenKey (REST)', () => {
       expect(r.statusCode).toBe(400)
     })
   })
+
+  describe('POST /projects/:projectId/token-keys', () => {
+    let postProject: Project
+
+    beforeAll(async () => {
+      const account = await makeAccount(app)
+      postProject = await makeProject(app, {
+        name: 'POST token-keys project',
+        authorId: account.id,
+      })
+    })
+
+    test('201 with position=end at top level', async ({ task }) => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: { key: `end_${task.id}`, position: 'end' },
+      })
+
+      expect(r.statusCode).toBe(201)
+      expect(r.json()).toEqual({
+        id: expect.any(String),
+        projectId: postProject.id,
+        key: `end_${task.id}`,
+      })
+    })
+
+    test('201 with position=start at top level', async ({ task }) => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: { key: `start_${task.id}`, position: 'start' },
+      })
+
+      expect(r.statusCode).toBe(201)
+    })
+
+    test('201 with position=after using a sibling', async ({ task }) => {
+      const sibling = await makeTokenKey(app, postProject.id, {
+        key: `sibling_${task.id}`,
+      })
+
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: {
+          key: `after_${task.id}`,
+          position: 'after',
+          afterId: sibling.id,
+        },
+      })
+
+      expect(r.statusCode).toBe(201)
+    })
+
+    test('201 with parentId creates a child', async ({ task }) => {
+      const parent = await makeTokenKey(app, postProject.id, {
+        key: `parent_${task.id}`,
+      })
+
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: {
+          key: `child_${task.id}`,
+          position: 'end',
+          parentId: parent.id,
+        },
+      })
+
+      expect(r.statusCode).toBe(201)
+      expect(r.json()).toEqual({
+        id: expect.any(String),
+        projectId: postProject.id,
+        parentId: parent.id,
+        key: `child_${task.id}`,
+      })
+    })
+
+    test('multiple position=end keep insertion order', async ({ task }) => {
+      const account = await makeAccount(app)
+      const p = await makeProject(app, {
+        name: `order_${task.id}`,
+        authorId: account.id,
+      })
+
+      const labels = ['a', 'b', 'c']
+      for (const label of labels) {
+        const r = await app.inject({
+          method: 'POST',
+          url: `/projects/${p.id}/token-keys`,
+          payload: { key: label, position: 'end' },
+        })
+        expect(r.statusCode).toBe(201)
+      }
+
+      const list = await app.inject({
+        method: 'GET',
+        url: `/projects/${p.id}/token-keys?parentId=null`,
+      })
+      expect(list.statusCode).toBe(200)
+      expect(list.json<TokenKey[]>().map(k => k.key)).toEqual(labels)
+    })
+
+    test('404 when project does not exist', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${randomUUID()}/token-keys`,
+        payload: { key: 'orphan', position: 'end' },
+      })
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('404 when parentId does not exist in project', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: {
+          key: 'child-of-ghost',
+          position: 'end',
+          parentId: randomUUID(),
+        },
+      })
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('404 when parentId belongs to a different project', async () => {
+      const account = await makeAccount(app)
+      const otherProject = await makeProject(app, {
+        name: 'other-for-parent-check',
+        authorId: account.id,
+      })
+      const otherKey = await makeTokenKey(app, otherProject.id, { key: 'foo' })
+
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: {
+          key: 'cross-project-child',
+          position: 'end',
+          parentId: otherKey.id,
+        },
+      })
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('409 on duplicate key at the same parent level', async ({ task }) => {
+      const payload = { key: `dup_${task.id}`, position: 'end' as const }
+
+      const first = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload,
+      })
+      expect(first.statusCode).toBe(201)
+
+      const second = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload,
+      })
+      expect(second.statusCode).toBe(409)
+    })
+
+    test('400 when afterId does not match a sibling', async ({ task }) => {
+      const otherParent = await makeTokenKey(app, postProject.id, {
+        key: `parent-x_${task.id}`,
+      })
+      const childOfOther = await makeTokenKey(app, postProject.id, {
+        key: `child-x_${task.id}`,
+        parentId: otherParent.id,
+      })
+
+      // child of `otherParent` is not a sibling at top level
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: {
+          key: `bad-after_${task.id}`,
+          position: 'after',
+          afterId: childOfOther.id,
+        },
+      })
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when position is missing', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: { key: 'no-position' },
+      })
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when position is invalid', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: { key: 'bad-position', position: 'middle' },
+      })
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when position=after but afterId is missing', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: { key: 'no-afterId', position: 'after' },
+      })
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when key is empty', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: { key: '', position: 'end' },
+      })
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when projectId is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: '/projects/not-a-uuid/token-keys',
+        payload: { key: 'whatever', position: 'end' },
+      })
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when parentId is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/projects/${postProject.id}/token-keys`,
+        payload: { key: 'bad-parent', position: 'end', parentId: 'nope' },
+      })
+      expect(r.statusCode).toBe(400)
+    })
+  })
 })
