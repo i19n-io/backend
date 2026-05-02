@@ -32,4 +32,17 @@ export class TokenKeyController {
 
     return this.tokenKeyService.findMany({ projectId, parentId })
   }
+
+  @Get('projects/:projectId/token-keys/:id')
+  @ApiOkResponse({ type: TokenKey })
+  @ApiNotFoundResponse({ description: 'Token key not found in project' })
+  async findOne(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<TokenKey> {
+    const tokenKey = await this.tokenKeyService.findOne(projectId, id)
+    if (!tokenKey) throw new NotFoundException('Token key not found in project')
+
+    return tokenKey
+  }
 }

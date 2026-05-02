@@ -152,4 +152,77 @@ describe('TokenKey (REST)', () => {
       expect(r.statusCode).toBe(400)
     })
   })
+
+  describe('GET /projects/:projectId/token-keys/:id', () => {
+    let key: TokenKey
+
+    beforeAll(async () => {
+      key = await makeTokenKey(app, project.id, { key: 'lookup' })
+    })
+
+    test('200 returns the key when present in project', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/projects/${project.id}/token-keys/${key.id}`,
+      })
+
+      expect(r.statusCode).toBe(200)
+      expect(r.json()).toEqual({
+        id: key.id,
+        projectId: project.id,
+        key: 'lookup',
+      })
+    })
+
+    test('404 when id does not exist', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/projects/${project.id}/token-keys/${randomUUID()}`,
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('404 when key belongs to a different project', async () => {
+      const account = await makeAccount(app)
+      const otherProject = await makeProject(app, {
+        name: 'other project',
+        authorId: account.id,
+      })
+
+      const r = await app.inject({
+        method: 'GET',
+        url: `/projects/${otherProject.id}/token-keys/${key.id}`,
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('404 when projectId does not exist', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/projects/${randomUUID()}/token-keys/${key.id}`,
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('400 when projectId is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/projects/not-a-uuid/token-keys/${key.id}`,
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when id is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/projects/${project.id}/token-keys/not-a-uuid`,
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+  })
 })
