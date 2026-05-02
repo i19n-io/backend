@@ -1,5 +1,9 @@
 import { applyDecorators } from '@nestjs/common'
-import { ApiProperty, type ApiPropertyOptions } from '@nestjs/swagger'
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  type ApiPropertyOptions,
+} from '@nestjs/swagger'
 import { IsUUID } from 'class-validator'
 
 export const ApiPropertyUuid = (options?: ApiPropertyOptions) =>
@@ -12,3 +16,11 @@ export const ApiPropertyUuid = (options?: ApiPropertyOptions) =>
     }),
     IsUUID(4),
   )
+
+export const ApiPropertyUuidOptional = (options?: ApiPropertyOptions) =>
+  ApiPropertyOptional({
+    format: 'uuid',
+    minLength: 36,
+    maxLength: 36,
+    ...options,
+  })
