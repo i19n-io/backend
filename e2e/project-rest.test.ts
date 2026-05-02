@@ -137,4 +137,124 @@ describe('Project (REST)', () => {
       expect(r.statusCode).toBe(400)
     })
   })
+
+  describe('POST /projects', () => {
+    test('201 with created project including embedded author', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: '/projects',
+        payload: {
+          name: 'created-via-rest',
+          defaultLang: 'en',
+          authorId: account.id,
+        },
+      })
+
+      expect(r.statusCode).toBe(201)
+      expect(r.json()).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          name: 'created-via-rest',
+          defaultLang: 'en',
+          authorId: account.id,
+          author: expect.objectContaining({
+            id: account.id,
+            name: account.name,
+          }),
+        }),
+      )
+    })
+
+    test('404 when authorId does not exist', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: '/projects',
+        payload: {
+          name: 'orphan',
+          defaultLang: 'en',
+          authorId: randomUUID(),
+        },
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('400 when body is empty', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: '/projects',
+        payload: {},
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when name is missing', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: '/projects',
+        payload: { defaultLang: 'en', authorId: account.id },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when name is empty', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: '/projects',
+        payload: { name: '', defaultLang: 'en', authorId: account.id },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when defaultLang is missing', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: '/projects',
+        payload: { name: 'no-lang', authorId: account.id },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when defaultLang is not a valid locale', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: '/projects',
+        payload: {
+          name: 'bad-lang',
+          defaultLang: 'not_a_locale!',
+          authorId: account.id,
+        },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when authorId is missing', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: '/projects',
+        payload: { name: 'no-author', defaultLang: 'en' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when authorId is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: '/projects',
+        payload: {
+          name: 'bad-author-uuid',
+          defaultLang: 'en',
+          authorId: 'not-a-uuid',
+        },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+  })
 })

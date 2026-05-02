@@ -1,19 +1,32 @@
 import {
+  Body,
+  ConflictException,
   Controller,
   Get,
   NotFoundException,
   Param,
   ParseUUIDPipe,
+  Post,
 } from '@nestjs/common'
-import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
-import { Project } from '~/project/models'
+import { AccountService } from '~/account/account.service'
+import { Project, ProjectCreate } from '~/project/models'
 import { ProjectService } from '~/project/project.service'
 
 @Controller('projects')
 @ApiTags('Projects')
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly projectService: ProjectService,
+  ) {}
 
   @Get()
   @ApiOkResponse({ type: Project, isArray: true })
@@ -29,5 +42,19 @@ export class ProjectController {
     if (!project) throw new NotFoundException('Project not found')
 
     return project
+  }
+
+  @Post()
+  @ApiCreatedResponse({ type: Project })
+  @ApiNotFoundResponse({ description: 'Author not found' })
+  @ApiConflictResponse({ description: 'Project already exists' })
+  async create(@Body() dto: ProjectCreate): Promise<Project> {
+    const author = await this.accountService.findOneById(dto.authorId)
+    if (!author) throw new NotFoundException('Author not found')
+
+    const r = await this.projectService.create(dto)
+    if (!r.ok) throw new ConflictException('Project already exists')
+
+    return r.data
   }
 }
