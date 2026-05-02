@@ -46,7 +46,7 @@ final cleanup step.
   (already configured in `src/helpers/setup/validation.ts`).
 - DTOs documented with `@ApiProperty` (and helpers like `ApiPropertyUuid`
   in `src/core/proto/helpers/`). Existing GraphQL `@Field/@ObjectType/
-  @InputType` decorators stay until cleanup, but new REST DTOs should not
+@InputType` decorators stay until cleanup, but new REST DTOs should not
   rely on them.
 - Errors: use Nest's built-in HTTP exceptions
   (`NotFoundException`, `ConflictException`, `BadRequestException`, …).
@@ -56,7 +56,7 @@ final cleanup step.
 - Status codes: `201 Created` for `POST`, `200 OK` for reads / `PATCH`,
   `404` for "not found", `409` for "already exists / conflict".
 - Pagination is not implemented yet (services have `// TODO: implement
-  pagination`). Don't add it as part of this migration unless asked.
+pagination`). Don't add it as part of this migration unless asked.
 
 ### Project & author
 
@@ -75,7 +75,7 @@ during the migration discussion.
   non-obvious WHY.
 - Don't add features beyond the migration step under discussion.
   Refactors, abstractions, error-type unification (`// TODO: Use universal
-  result type`) are out of scope unless the user asks.
+result type`) are out of scope unless the user asks.
 - Don't introduce backwards-compat shims for code we are migrating away
   from.
 
@@ -101,20 +101,20 @@ endpoint migration as done.
 
 REST endpoint paths are proposals; finalize per step with the user.
 
-| # | Stage | GraphQL op | Proposed REST |
-| - | - | - | - |
-| 1 | TokenValue reads | `tokenValueById` | `GET /token-values/:id` |
-| 2 | TokenValue reads | `tokenValueList` | `GET /token-keys/:keyId/values?langs=…` |
-| 3 | TokenValue reads | `tokenValue` | `GET /token-keys/:keyId/values/:lang` |
-| 4 | TokenValue write | `tokenValueCreate` | `POST /token-keys/:keyId/values` |
-| 5 | TokenKey reads | `tokenKeyList` | `GET /projects/:projectId/token-keys?parentId=…` |
-| 6 | TokenKey reads | `tokenKeyById` | `GET /projects/:projectId/token-keys/:id` |
-| 7 | TokenKey write | `tokenKeyCreate` | `POST /projects/:projectId/token-keys` |
-| 8 | Project reads | `projectList` | `GET /projects` |
-| 9 | Project reads | `projectById` | `GET /projects/:id` |
-| 10 | Project writes | `projectCreate` | `POST /projects` |
-| 11 | Project writes | `projectUpdate` | `PATCH /projects/:id` |
-| 12 | Cleanup | — | Remove `@nestjs/graphql`, `@nestjs/mercurius`, `mercurius`, `graphql`, `graphql-scalars`, `src/core/graphql/`, GraphQL decorators on models, GraphQL e2e helpers; rewrite e2e tests via REST. |
+| #   | Stage            | GraphQL op         | Proposed REST                                                                                                                                                                                 |
+| --- | ---------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | TokenValue reads | `tokenValueById`   | `GET /token-values/:id`                                                                                                                                                                       |
+| 2   | TokenValue reads | `tokenValueList`   | `GET /token-keys/:keyId/values?langs=…`                                                                                                                                                       |
+| 3   | TokenValue reads | `tokenValue`       | `GET /token-keys/:keyId/values/:lang`                                                                                                                                                         |
+| 4   | TokenValue write | `tokenValueCreate` | `POST /token-keys/:keyId/values`                                                                                                                                                              |
+| 5   | TokenKey reads   | `tokenKeyList`     | `GET /projects/:projectId/token-keys?parentId=…`                                                                                                                                              |
+| 6   | TokenKey reads   | `tokenKeyById`     | `GET /projects/:projectId/token-keys/:id`                                                                                                                                                     |
+| 7   | TokenKey write   | `tokenKeyCreate`   | `POST /projects/:projectId/token-keys`                                                                                                                                                        |
+| 8   | Project reads    | `projectList`      | `GET /projects`                                                                                                                                                                               |
+| 9   | Project reads    | `projectById`      | `GET /projects/:id`                                                                                                                                                                           |
+| 10  | Project writes   | `projectCreate`    | `POST /projects`                                                                                                                                                                              |
+| 11  | Project writes   | `projectUpdate`    | `PATCH /projects/:id`                                                                                                                                                                         |
+| 12  | Cleanup          | —                  | Remove `@nestjs/graphql`, `@nestjs/mercurius`, `mercurius`, `graphql`, `graphql-scalars`, `src/core/graphql/`, GraphQL decorators on models, GraphQL e2e helpers; rewrite e2e tests via REST. |
 
 After each step:
 

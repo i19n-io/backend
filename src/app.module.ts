@@ -26,10 +26,6 @@ import { TokenModule } from '~/token/token.module'
         module: AuthModule,
         children: [{ path: 'github', module: GithubModule }],
       },
-      {
-        path: 'tokens',
-        module: TokenModule,
-      },
     ]),
   ],
 })

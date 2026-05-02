@@ -38,7 +38,7 @@ class QueryParametersInput {
   readonly format: 'tree' | 'flat' = 'tree'
 }
 
-@Controller()
+@Controller('tokens')
 export class TokenController {
   constructor(
     private readonly db: DatabaseService,
