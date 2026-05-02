@@ -3,43 +3,31 @@ import { randomUUID } from 'node:crypto'
 import type { NestFastifyApplication } from '@nestjs/platform-fastify'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 
-import { AccountService } from '~/account/account.service'
-import { ProjectService } from '~/project/project.service'
-import type { TokenKey, TokenValue } from '~/token/models'
-import { TokenKeyService } from '~/token/token-key.service'
-import { TokenValueService } from '~/token/token-value.service'
+import type { Project } from '~/project/models'
+import type { TokenKey } from '~/token/models'
 
-import { createTestApp } from '~/e2e/helpers'
+import {
+  createTestApp,
+  makeAccount,
+  makeProject,
+  makeTokenKey,
+  makeTokenValue,
+} from '~/e2e/helpers'
 
 describe('TokenValue (REST)', () => {
   let app: NestFastifyApplication
+  let project: Project
   let tokenKey: TokenKey
-  let tokenValue: TokenValue
 
   beforeAll(async () => {
     app = await createTestApp()
 
-    const rAccount = await app.get(AccountService).create({ name: 'John Doe' })
-    if (!rAccount.ok) throw new Error(`Account: ${rAccount.error}`)
-
-    const rProject = await app.get(ProjectService).create({
+    const account = await makeAccount(app)
+    project = await makeProject(app, {
       name: 'TokenValue REST test project',
-      defaultLang: 'en',
-      authorId: rAccount.data.id,
+      authorId: account.id,
     })
-    if (!rProject.ok) throw new Error(`Project: ${rProject.error}`)
-
-    const rTokenKey = await app
-      .get(TokenKeyService)
-      .create(rProject.data.id, { key: 'greeting', position: 'end' })
-    if (!rTokenKey.ok) throw new Error('TokenKey create failed')
-    tokenKey = rTokenKey.data
-
-    const rTokenValue = await app
-      .get(TokenValueService)
-      .create(tokenKey.id, { lang: 'en', value: 'Hello' })
-    if (!rTokenValue.ok) throw new Error(`TokenValue: ${rTokenValue.error}`)
-    tokenValue = rTokenValue.data
+    tokenKey = await makeTokenKey(app, project.id, { key: 'greeting' })
   })
 
   afterAll(async () => {
@@ -48,6 +36,11 @@ describe('TokenValue (REST)', () => {
 
   describe('GET /token-values/:id', () => {
     test('200 with body when found', async () => {
+      const tokenValue = await makeTokenValue(app, tokenKey.id, {
+        lang: 'en',
+        value: 'Hello',
+      })
+
       const r = await app.inject({
         method: 'GET',
         url: `/token-values/${tokenValue.id}`,
@@ -75,6 +68,124 @@ describe('TokenValue (REST)', () => {
       const r = await app.inject({
         method: 'GET',
         url: '/token-values/not-a-uuid',
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+  })
+
+  describe('GET /token-keys/:keyId/values', () => {
+    let key: TokenKey
+
+    beforeAll(async () => {
+      key = await makeTokenKey(app, project.id, { key: 'farewell' })
+      await makeTokenValue(app, key.id, { lang: 'en', value: 'english value' })
+      await makeTokenValue(app, key.id, { lang: 'fr', value: 'french value' })
+      await makeTokenValue(app, key.id, { lang: 'de', value: 'german value' })
+    })
+
+    test('200 with all values when no langs filter', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/token-keys/${key.id}/values`,
+      })
+
+      expect(r.statusCode).toBe(200)
+
+      const body = r.json<unknown[]>()
+      expect(body).toHaveLength(3)
+      expect(body).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            keyId: key.id,
+            lang: 'en',
+            value: 'english value',
+          }),
+          expect.objectContaining({
+            keyId: key.id,
+            lang: 'fr',
+            value: 'french value',
+          }),
+          expect.objectContaining({
+            keyId: key.id,
+            lang: 'de',
+            value: 'german value',
+          }),
+        ]),
+      )
+    })
+
+    test('200 filtered by comma-separated langs', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/token-keys/${key.id}/values?langs=en,fr`,
+      })
+
+      expect(r.statusCode).toBe(200)
+      const body = r.json<{ lang: string }[]>()
+      expect(body).toHaveLength(2)
+      expect(body.map(v => v.lang).sort()).toEqual(['en', 'fr'])
+    })
+
+    test('200 filtered by repeated langs param', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/token-keys/${key.id}/values?langs=en&langs=de`,
+      })
+
+      expect(r.statusCode).toBe(200)
+      const body = r.json<{ lang: string }[]>()
+      expect(body).toHaveLength(2)
+      expect(body.map(v => v.lang).sort()).toEqual(['de', 'en'])
+    })
+
+    test('200 with single lang returns one-item array', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/token-keys/${key.id}/values?langs=fr`,
+      })
+
+      expect(r.statusCode).toBe(200)
+      const body = r.json<{ lang: string }[]>()
+      expect(body).toEqual([
+        expect.objectContaining({ lang: 'fr', value: 'french value' }),
+      ])
+    })
+
+    test('200 empty array when key has no values', async () => {
+      const empty = await makeTokenKey(app, project.id, { key: 'empty' })
+      const r = await app.inject({
+        method: 'GET',
+        url: `/token-keys/${empty.id}/values`,
+      })
+
+      expect(r.statusCode).toBe(200)
+      expect(r.json()).toEqual([])
+    })
+
+    test('200 empty array when keyId does not exist', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/token-keys/${randomUUID()}/values`,
+      })
+
+      expect(r.statusCode).toBe(200)
+      expect(r.json()).toEqual([])
+    })
+
+    test('400 when keyId is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: '/token-keys/not-a-uuid/values',
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when langs contains invalid locale', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/token-keys/${key.id}/values?langs=en,not_a_locale!`,
       })
 
       expect(r.statusCode).toBe(400)
