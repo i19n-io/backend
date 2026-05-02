@@ -252,4 +252,111 @@ describe('TokenValue (REST)', () => {
       expect(r.statusCode).toBe(400)
     })
   })
+
+  describe('POST /token-keys/:keyId/values', () => {
+    let key: TokenKey
+
+    beforeAll(async () => {
+      key = await makeTokenKey(app, project.id, { key: 'creation' })
+    })
+
+    test('201 with created value', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/token-keys/${key.id}/values`,
+        payload: { lang: 'en', value: 'created en' },
+      })
+
+      expect(r.statusCode).toBe(201)
+      expect(r.json()).toEqual({
+        id: expect.any(String),
+        keyId: key.id,
+        lang: 'en',
+        value: 'created en',
+      })
+    })
+
+    test('409 on duplicate (keyId, lang)', async () => {
+      const k = await makeTokenKey(app, project.id, { key: 'dup-create' })
+      await makeTokenValue(app, k.id, { lang: 'en', value: 'first' })
+
+      const r = await app.inject({
+        method: 'POST',
+        url: `/token-keys/${k.id}/values`,
+        payload: { lang: 'en', value: 'second' },
+      })
+
+      expect(r.statusCode).toBe(409)
+    })
+
+    test('404 when keyId does not exist', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/token-keys/${randomUUID()}/values`,
+        payload: { lang: 'en', value: 'orphan' },
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('400 when keyId is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: '/token-keys/not-a-uuid/values',
+        payload: { lang: 'en', value: 'whatever' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when body is empty', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/token-keys/${key.id}/values`,
+        payload: {},
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when lang is missing', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/token-keys/${key.id}/values`,
+        payload: { value: 'no lang' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when value is missing', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/token-keys/${key.id}/values`,
+        payload: { lang: 'fr' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when lang is not a valid locale', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/token-keys/${key.id}/values`,
+        payload: { lang: 'not_a_locale!', value: 'x' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when value is empty', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/token-keys/${key.id}/values`,
+        payload: { lang: 'fr', value: '' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+  })
 })
