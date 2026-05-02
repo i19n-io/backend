@@ -191,4 +191,65 @@ describe('TokenValue (REST)', () => {
       expect(r.statusCode).toBe(400)
     })
   })
+
+  describe('GET /token-keys/:keyId/values/:lang', () => {
+    let key: TokenKey
+
+    beforeAll(async () => {
+      key = await makeTokenKey(app, project.id, { key: 'salutation' })
+      await makeTokenValue(app, key.id, { lang: 'en', value: 'english one' })
+      await makeTokenValue(app, key.id, { lang: 'fr', value: 'french one' })
+    })
+
+    test('200 with the matching value', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/token-keys/${key.id}/values/en`,
+      })
+
+      expect(r.statusCode).toBe(200)
+      expect(r.json()).toEqual({
+        id: expect.any(String),
+        keyId: key.id,
+        lang: 'en',
+        value: 'english one',
+      })
+    })
+
+    test('404 when lang is not present for the key', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/token-keys/${key.id}/values/de`,
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('404 when keyId does not exist', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/token-keys/${randomUUID()}/values/en`,
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('400 when keyId is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: '/token-keys/not-a-uuid/values/en',
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when lang is not a valid locale', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/token-keys/${key.id}/values/not_a_locale!`,
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+  })
 })
