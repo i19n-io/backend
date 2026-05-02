@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 import type { NestFastifyApplication } from '@nestjs/platform-fastify'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 
@@ -86,6 +88,53 @@ describe('Project (REST)', () => {
       const found2 = body.find(p => p.id === p2.id)
       expect(found1?.author.id).toBe(account.id)
       expect(found2?.author.id).toBe(otherAccount.id)
+    })
+  })
+
+  describe('GET /projects/:id', () => {
+    test('200 returns project with embedded author', async () => {
+      const project = await makeProject(app, {
+        name: 'project-rest-by-id',
+        defaultLang: 'fr',
+        authorId: account.id,
+      })
+
+      const r = await app.inject({
+        method: 'GET',
+        url: `/projects/${project.id}`,
+      })
+
+      expect(r.statusCode).toBe(200)
+      expect(r.json()).toEqual(
+        expect.objectContaining({
+          id: project.id,
+          name: 'project-rest-by-id',
+          defaultLang: 'fr',
+          authorId: account.id,
+          author: expect.objectContaining({
+            id: account.id,
+            name: account.name,
+          }),
+        }),
+      )
+    })
+
+    test('404 when id does not exist', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/projects/${randomUUID()}`,
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('400 when id is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: '/projects/not-a-uuid',
+      })
+
+      expect(r.statusCode).toBe(400)
     })
   })
 })
