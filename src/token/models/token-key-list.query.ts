@@ -2,7 +2,15 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { IsOptional, IsUUID } from 'class-validator'
 
+import { ApiPropertyUuid } from '~/core/proto/helpers'
+
+import { ValidateAsUuid } from '~/helpers/validators'
+
 export class TokenKeyListQuery {
+  @ApiPropertyUuid()
+  @ValidateAsUuid()
+  readonly projectId!: string
+
   @ApiPropertyOptional({
     description:
       'Filter by parent. UUID for a specific parent, `null` (or empty) ' +

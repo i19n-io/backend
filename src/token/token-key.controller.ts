@@ -16,6 +16,7 @@ import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
 
@@ -23,7 +24,7 @@ import { ProjectService } from '~/project/project.service'
 import { TokenKey, TokenKeyCreate, TokenKeyListQuery } from '~/token/models'
 import { TokenKeyService } from '~/token/token-key.service'
 
-@Controller()
+@Controller('tokens')
 @ApiTags('Tokens')
 export class TokenKeyController {
   constructor(
@@ -31,12 +32,11 @@ export class TokenKeyController {
     private readonly tokenKeyService: TokenKeyService,
   ) {}
 
-  @Get('projects/:projectId/token-keys')
+  @Get('keys')
   @ApiOkResponse({ type: TokenKey, isArray: true })
   @ApiNotFoundResponse({ description: 'Project not found' })
   async findMany(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Query() { parentId }: TokenKeyListQuery,
+    @Query() { projectId, parentId }: TokenKeyListQuery,
   ): Promise<TokenKey[]> {
     const project = await this.projectService.findOne(projectId)
     if (!project) throw new NotFoundException('Project not found')
@@ -44,12 +44,18 @@ export class TokenKeyController {
     return this.tokenKeyService.findMany({ projectId, parentId })
   }
 
-  @Get('projects/:projectId/token-keys/:id')
+  @Get('keys/:id')
+  @ApiQuery({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
   @ApiOkResponse({ type: TokenKey })
   @ApiNotFoundResponse({ description: 'Token key not found in project' })
   async findOne(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
     @Param('id', ParseUUIDPipe) id: string,
+    @Query('projectId', ParseUUIDPipe) projectId: string,
   ): Promise<TokenKey> {
     const tokenKey = await this.tokenKeyService.findOne(projectId, id)
     if (!tokenKey) throw new NotFoundException('Token key not found in project')
@@ -57,7 +63,13 @@ export class TokenKeyController {
     return tokenKey
   }
 
-  @Post('projects/:projectId/token-keys')
+  @Post('keys')
+  @ApiQuery({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
   @ApiCreatedResponse({ type: TokenKey })
   @ApiNotFoundResponse({ description: 'Project or parent key not found' })
   @ApiConflictResponse({
@@ -67,7 +79,7 @@ export class TokenKeyController {
     description: 'Invalid body, or `afterId` does not match a sibling',
   })
   async create(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Query('projectId', ParseUUIDPipe) projectId: string,
     @Body() dto: TokenKeyCreate,
   ): Promise<TokenKey> {
     const project = await this.projectService.findOne(projectId)

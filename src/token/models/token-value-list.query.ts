@@ -1,10 +1,16 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { IsOptional } from 'class-validator'
 
+import { ApiPropertyUuid } from '~/core/proto/helpers'
+
 import { TransformToStringList } from '~/helpers/transformers'
-import { ValidateAsLang } from '~/helpers/validators'
+import { ValidateAsLang, ValidateAsUuid } from '~/helpers/validators'
 
 export class TokenValueListQuery {
+  @ApiPropertyUuid()
+  @ValidateAsUuid()
+  readonly projectId!: string
+
   @ApiPropertyOptional({
     type: String,
     description:

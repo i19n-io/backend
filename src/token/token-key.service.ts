@@ -235,14 +235,6 @@ export class TokenKeyService {
     if (r) return new TokenKey(r)
   }
 
-  async findOneById(id: string) {
-    const r = await this.db.query.tokenKeyTable.findFirst({
-      where: (t, { eq }) => eq(t.id, id),
-    })
-
-    if (r) return new TokenKey(r)
-  }
-
   async create(
     projectId: string,
     dto: TokenKeyCreate,

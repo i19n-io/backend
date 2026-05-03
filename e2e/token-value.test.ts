@@ -17,7 +17,6 @@ import {
 describe('TokenValue (REST)', () => {
   let app: NestFastifyApplication
   let project: Project
-  let tokenKey: TokenKey
 
   beforeAll(async () => {
     app = await createTestApp()
@@ -27,54 +26,13 @@ describe('TokenValue (REST)', () => {
       name: 'TokenValue REST test project',
       authorId: account.id,
     })
-    tokenKey = await makeTokenKey(app, project.id, { key: 'greeting' })
   })
 
   afterAll(async () => {
     await app.close()
   })
 
-  describe('GET /token-values/:id', () => {
-    test('200 with body when found', async () => {
-      const tokenValue = await makeTokenValue(app, tokenKey.id, {
-        lang: 'en',
-        value: 'Hello',
-      })
-
-      const r = await app.inject({
-        method: 'GET',
-        url: `/token-values/${tokenValue.id}`,
-      })
-
-      expect(r.statusCode).toBe(200)
-      expect(r.json()).toEqual({
-        id: tokenValue.id,
-        keyId: tokenKey.id,
-        lang: 'en',
-        value: 'Hello',
-      })
-    })
-
-    test('404 when not found', async () => {
-      const r = await app.inject({
-        method: 'GET',
-        url: `/token-values/${randomUUID()}`,
-      })
-
-      expect(r.statusCode).toBe(404)
-    })
-
-    test('400 when id is not a UUID', async () => {
-      const r = await app.inject({
-        method: 'GET',
-        url: '/token-values/not-a-uuid',
-      })
-
-      expect(r.statusCode).toBe(400)
-    })
-  })
-
-  describe('GET /token-keys/:keyId/values', () => {
+  describe('GET /tokens/keys/:keyId/values', () => {
     let key: TokenKey
 
     beforeAll(async () => {
@@ -87,7 +45,7 @@ describe('TokenValue (REST)', () => {
     test('200 with all values when no langs filter', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/token-keys/${key.id}/values`,
+        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -118,7 +76,7 @@ describe('TokenValue (REST)', () => {
     test('200 filtered by comma-separated langs', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/token-keys/${key.id}/values?langs=en,fr`,
+        url: `/tokens/keys/${key.id}/values?projectId=${project.id}&langs=en,fr`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -130,7 +88,7 @@ describe('TokenValue (REST)', () => {
     test('200 filtered by repeated langs param', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/token-keys/${key.id}/values?langs=en&langs=de`,
+        url: `/tokens/keys/${key.id}/values?projectId=${project.id}&langs=en&langs=de`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -142,7 +100,7 @@ describe('TokenValue (REST)', () => {
     test('200 with single lang returns one-item array', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/token-keys/${key.id}/values?langs=fr`,
+        url: `/tokens/keys/${key.id}/values?projectId=${project.id}&langs=fr`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -156,27 +114,59 @@ describe('TokenValue (REST)', () => {
       const empty = await makeTokenKey(app, project.id, { key: 'empty' })
       const r = await app.inject({
         method: 'GET',
-        url: `/token-keys/${empty.id}/values`,
+        url: `/tokens/keys/${empty.id}/values?projectId=${project.id}`,
       })
 
       expect(r.statusCode).toBe(200)
       expect(r.json()).toEqual([])
     })
 
-    test('200 empty array when keyId does not exist', async () => {
+    test('404 when keyId does not exist in project', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/token-keys/${randomUUID()}/values`,
+        url: `/tokens/keys/${randomUUID()}/values?projectId=${project.id}`,
       })
 
-      expect(r.statusCode).toBe(200)
-      expect(r.json()).toEqual([])
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('404 when key belongs to another project', async () => {
+      const otherAccount = await makeAccount(app)
+      const otherProject = await makeProject(app, {
+        name: 'other-for-cross-check',
+        authorId: otherAccount.id,
+      })
+
+      const r = await app.inject({
+        method: 'GET',
+        url: `/tokens/keys/${key.id}/values?projectId=${otherProject.id}`,
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('400 when projectId is missing', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/tokens/keys/${key.id}/values`,
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when projectId is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'GET',
+        url: `/tokens/keys/${key.id}/values?projectId=not-a-uuid`,
+      })
+
+      expect(r.statusCode).toBe(400)
     })
 
     test('400 when keyId is not a UUID', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: '/token-keys/not-a-uuid/values',
+        url: `/tokens/keys/not-a-uuid/values?projectId=${project.id}`,
       })
 
       expect(r.statusCode).toBe(400)
@@ -185,75 +175,14 @@ describe('TokenValue (REST)', () => {
     test('400 when langs contains invalid locale', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/token-keys/${key.id}/values?langs=en,not_a_locale!`,
+        url: `/tokens/keys/${key.id}/values?projectId=${project.id}&langs=en,not_a_locale!`,
       })
 
       expect(r.statusCode).toBe(400)
     })
   })
 
-  describe('GET /token-keys/:keyId/values/:lang', () => {
-    let key: TokenKey
-
-    beforeAll(async () => {
-      key = await makeTokenKey(app, project.id, { key: 'salutation' })
-      await makeTokenValue(app, key.id, { lang: 'en', value: 'english one' })
-      await makeTokenValue(app, key.id, { lang: 'fr', value: 'french one' })
-    })
-
-    test('200 with the matching value', async () => {
-      const r = await app.inject({
-        method: 'GET',
-        url: `/token-keys/${key.id}/values/en`,
-      })
-
-      expect(r.statusCode).toBe(200)
-      expect(r.json()).toEqual({
-        id: expect.any(String),
-        keyId: key.id,
-        lang: 'en',
-        value: 'english one',
-      })
-    })
-
-    test('404 when lang is not present for the key', async () => {
-      const r = await app.inject({
-        method: 'GET',
-        url: `/token-keys/${key.id}/values/de`,
-      })
-
-      expect(r.statusCode).toBe(404)
-    })
-
-    test('404 when keyId does not exist', async () => {
-      const r = await app.inject({
-        method: 'GET',
-        url: `/token-keys/${randomUUID()}/values/en`,
-      })
-
-      expect(r.statusCode).toBe(404)
-    })
-
-    test('400 when keyId is not a UUID', async () => {
-      const r = await app.inject({
-        method: 'GET',
-        url: '/token-keys/not-a-uuid/values/en',
-      })
-
-      expect(r.statusCode).toBe(400)
-    })
-
-    test('400 when lang is not a valid locale', async () => {
-      const r = await app.inject({
-        method: 'GET',
-        url: `/token-keys/${key.id}/values/not_a_locale!`,
-      })
-
-      expect(r.statusCode).toBe(400)
-    })
-  })
-
-  describe('POST /token-keys/:keyId/values', () => {
+  describe('POST /tokens/keys/:keyId/values', () => {
     let key: TokenKey
 
     beforeAll(async () => {
@@ -263,7 +192,7 @@ describe('TokenValue (REST)', () => {
     test('201 with created value', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/token-keys/${key.id}/values`,
+        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
         payload: { lang: 'en', value: 'created en' },
       })
 
@@ -282,7 +211,7 @@ describe('TokenValue (REST)', () => {
 
       const r = await app.inject({
         method: 'POST',
-        url: `/token-keys/${k.id}/values`,
+        url: `/tokens/keys/${k.id}/values?projectId=${project.id}`,
         payload: { lang: 'en', value: 'second' },
       })
 
@@ -292,17 +221,53 @@ describe('TokenValue (REST)', () => {
     test('404 when keyId does not exist', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/token-keys/${randomUUID()}/values`,
+        url: `/tokens/keys/${randomUUID()}/values?projectId=${project.id}`,
         payload: { lang: 'en', value: 'orphan' },
       })
 
       expect(r.statusCode).toBe(404)
     })
 
+    test('404 when key belongs to another project', async () => {
+      const otherAccount = await makeAccount(app)
+      const otherProject = await makeProject(app, {
+        name: 'other-for-cross-post',
+        authorId: otherAccount.id,
+      })
+
+      const r = await app.inject({
+        method: 'POST',
+        url: `/tokens/keys/${key.id}/values?projectId=${otherProject.id}`,
+        payload: { lang: 'es', value: 'wrong project' },
+      })
+
+      expect(r.statusCode).toBe(404)
+    })
+
+    test('400 when projectId is missing', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/tokens/keys/${key.id}/values`,
+        payload: { lang: 'en', value: 'no-project' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
+    test('400 when projectId is not a UUID', async () => {
+      const r = await app.inject({
+        method: 'POST',
+        url: `/tokens/keys/${key.id}/values?projectId=not-a-uuid`,
+        payload: { lang: 'en', value: 'whatever' },
+      })
+
+      expect(r.statusCode).toBe(400)
+    })
+
     test('400 when keyId is not a UUID', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: '/token-keys/not-a-uuid/values',
+        url: `/tokens/keys/not-a-uuid/values?projectId=${project.id}`,
         payload: { lang: 'en', value: 'whatever' },
       })
 
@@ -312,7 +277,7 @@ describe('TokenValue (REST)', () => {
     test('400 when body is empty', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/token-keys/${key.id}/values`,
+        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
         payload: {},
       })
 
@@ -322,7 +287,7 @@ describe('TokenValue (REST)', () => {
     test('400 when lang is missing', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/token-keys/${key.id}/values`,
+        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
         payload: { value: 'no lang' },
       })
 
@@ -332,7 +297,7 @@ describe('TokenValue (REST)', () => {
     test('400 when value is missing', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/token-keys/${key.id}/values`,
+        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
         payload: { lang: 'fr' },
       })
 
@@ -342,7 +307,7 @@ describe('TokenValue (REST)', () => {
     test('400 when lang is not a valid locale', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/token-keys/${key.id}/values`,
+        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
         payload: { lang: 'not_a_locale!', value: 'x' },
       })
 
@@ -352,7 +317,7 @@ describe('TokenValue (REST)', () => {
     test('400 when value is empty', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/token-keys/${key.id}/values`,
+        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
         payload: { lang: 'fr', value: '' },
       })
 

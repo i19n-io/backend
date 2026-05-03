@@ -33,14 +33,22 @@ final cleanup step.
 
 ### REST conventions (target style)
 
-- Resourceful URLs, plural nouns, kebab-case. Resource names match entities:
-  `/projects`, `/token-keys`, `/token-values`. Nested under parent when
-  ownership is natural: `/projects/:projectId/token-keys`,
-  `/token-keys/:keyId/values`.
-- The existing `GET /tokens?project=&key=&lang=&format=` is a consumer
-  read-only endpoint (compiled tree/flat output), not CRUD over a `Token`
-  entity — it stays on `/tokens` and is unrelated to the `/token-*`
-  resource routes added by the migration.
+- Two top-level namespaces:
+  - `/projects` — project CRUD (top-level resource)
+  - `/tokens` — everything related to translation tokens (the consumer
+    endpoint, plus token-key and token-value CRUD)
+- Token URL map:
+  ```
+  GET    /tokens?projectId=…&key=…&lang=…&format=…       consumer
+  GET    /tokens/keys?projectId=…&parentId=…             list keys
+  GET    /tokens/keys/:id?projectId=…                    key by id
+  POST   /tokens/keys?projectId=…                        create key
+  GET    /tokens/keys/:keyId/values?projectId=…&langs=…  list values
+  POST   /tokens/keys/:keyId/values?projectId=…          create value
+  ```
+- `projectId` is a **required query parameter** on every `/tokens/...` route
+  (matches the existing consumer endpoint pattern). It both scopes the
+  operation to a project and returns 404 on cross-project access.
 - Verbs: `GET` list / `GET` by id / `POST` create / `PATCH` partial update.
 - Validation through `class-validator` DTOs + global `ValidationPipe`
   (already configured in `src/helpers/setup/validation.ts`).
@@ -101,15 +109,13 @@ endpoint migration as done.
 
 REST endpoint paths are proposals; finalize per step with the user.
 
-| #   | Stage            | GraphQL op         | Proposed REST                                                                                                                                                                                 |
+| #   | Stage            | GraphQL op         | REST                                                                                                                                                                                          |
 | --- | ---------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | TokenValue reads | `tokenValueById`   | `GET /token-values/:id`                                                                                                                                                                       |
-| 2   | TokenValue reads | `tokenValueList`   | `GET /token-keys/:keyId/values?langs=…`                                                                                                                                                       |
-| 3   | TokenValue reads | `tokenValue`       | `GET /token-keys/:keyId/values/:lang`                                                                                                                                                         |
-| 4   | TokenValue write | `tokenValueCreate` | `POST /token-keys/:keyId/values`                                                                                                                                                              |
-| 5   | TokenKey reads   | `tokenKeyList`     | `GET /projects/:projectId/token-keys?parentId=…`                                                                                                                                              |
-| 6   | TokenKey reads   | `tokenKeyById`     | `GET /projects/:projectId/token-keys/:id`                                                                                                                                                     |
-| 7   | TokenKey write   | `tokenKeyCreate`   | `POST /projects/:projectId/token-keys`                                                                                                                                                        |
+| 1-3 | TokenValue reads | `tokenValueList`   | `GET /tokens/keys/:keyId/values?projectId=…&langs=…` (covers also `tokenValueById`, `tokenValue` via `?langs=…`)                                                                              |
+| 4   | TokenValue write | `tokenValueCreate` | `POST /tokens/keys/:keyId/values?projectId=…`                                                                                                                                                 |
+| 5   | TokenKey reads   | `tokenKeyList`     | `GET /tokens/keys?projectId=…&parentId=…`                                                                                                                                                     |
+| 6   | TokenKey reads   | `tokenKeyById`     | `GET /tokens/keys/:id?projectId=…`                                                                                                                                                            |
+| 7   | TokenKey write   | `tokenKeyCreate`   | `POST /tokens/keys?projectId=…`                                                                                                                                                               |
 | 8   | Project reads    | `projectList`      | `GET /projects`                                                                                                                                                                               |
 | 9   | Project reads    | `projectById`      | `GET /projects/:id`                                                                                                                                                                           |
 | 10  | Project writes   | `projectCreate`    | `POST /projects`                                                                                                                                                                              |
