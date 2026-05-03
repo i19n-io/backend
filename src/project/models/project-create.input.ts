@@ -6,7 +6,7 @@ import { UUIDResolver } from 'graphql-scalars'
 import { PROJECT_NAME_MAX_LENGTH } from '~/core/constants'
 import { ApiPropertyUuid } from '~/core/proto/helpers'
 
-import { ValidateAsLang, ValidateAsUuid } from '~/helpers/validators'
+import { ValidateAsLang } from '~/helpers/validators'
 
 @InputType()
 export class ProjectCreate {
@@ -29,6 +29,5 @@ export class ProjectCreate {
 
   @ApiPropertyUuid()
   @Field(() => UUIDResolver)
-  @ValidateAsUuid()
   readonly authorId!: string
 }

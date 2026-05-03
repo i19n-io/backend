@@ -4,11 +4,8 @@ import { IsOptional, IsUUID } from 'class-validator'
 
 import { ApiPropertyUuid } from '~/core/proto/helpers'
 
-import { ValidateAsUuid } from '~/helpers/validators'
-
 export class TokenKeyListQuery {
   @ApiPropertyUuid()
-  @ValidateAsUuid()
   readonly project!: string
 
   @ApiPropertyOptional({

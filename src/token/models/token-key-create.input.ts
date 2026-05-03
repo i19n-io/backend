@@ -1,9 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsEnum,
   IsNotEmpty,
-  IsOptional,
   IsString,
   MaxLength,
   ValidateIf,
@@ -22,8 +21,6 @@ export type TokenKeyPosition = (typeof POSITIONS)[number]
 export class TokenKeyCreate {
   @ApiPropertyUuidOptional()
   @Field(() => UUIDResolver, { nullable: true })
-  @IsOptional()
-  @ValidateAsUuid()
   readonly parentId?: string
 
   /**
@@ -43,8 +40,17 @@ export class TokenKeyCreate {
   @IsEnum(POSITIONS)
   readonly position!: TokenKeyPosition
 
-  @ApiPropertyUuidOptional({
+  /**
+   * Required when `position` is "after". Plain `@ApiPropertyOptional`
+   * (not the combined helper) because the combined version embeds
+   * `@IsOptional()`, which short-circuits validators for missing values
+   * and would mask the missing-afterId error when position='after'.
+   */
+  @ApiPropertyOptional({
     description: 'Required when `position` is "after"',
+    format: 'uuid',
+    minLength: 36,
+    maxLength: 36,
   })
   @Field(() => UUIDResolver, { nullable: true })
   @ValidateIf((o: TokenKeyCreate) => o.position === 'after')

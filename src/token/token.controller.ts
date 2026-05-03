@@ -3,8 +3,9 @@ import { ApiProperty, ApiTags } from '@nestjs/swagger'
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 import { DatabaseService, type TokenKeySelect } from '~/core/database'
+import { ApiPropertyUuid } from '~/core/proto/helpers'
 
-import { ValidateAsLang, ValidateAsUuid } from '~/helpers/validators'
+import { ValidateAsLang } from '~/helpers/validators'
 import { ProjectService } from '~/project/project.service'
 import {
   TokenStructuredService,
@@ -12,8 +13,7 @@ import {
 } from '~/token/token-structured.service'
 
 class QueryParametersInput {
-  @ApiProperty()
-  @ValidateAsUuid()
+  @ApiPropertyUuid()
   readonly project!: string
 
   @ApiProperty({ required: false })

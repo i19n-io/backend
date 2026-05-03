@@ -4,11 +4,10 @@ import { IsOptional } from 'class-validator'
 import { ApiPropertyUuid } from '~/core/proto/helpers'
 
 import { TransformToStringList } from '~/helpers/transformers'
-import { ValidateAsLang, ValidateAsUuid } from '~/helpers/validators'
+import { ValidateAsLang } from '~/helpers/validators'
 
 export class TokenValueListQuery {
   @ApiPropertyUuid()
-  @ValidateAsUuid()
   readonly project!: string
 
   @ApiPropertyOptional({
