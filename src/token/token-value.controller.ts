@@ -26,7 +26,7 @@ import {
 import { TokenKeyService } from '~/token/token-key.service'
 import { TokenValueService } from '~/token/token-value.service'
 
-@Controller('tokens')
+@Controller()
 @ApiTags('Tokens')
 export class TokenValueController {
   constructor(

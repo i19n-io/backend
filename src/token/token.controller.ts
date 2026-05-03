@@ -38,7 +38,7 @@ class QueryParametersInput {
   readonly format: 'tree' | 'flat' = 'tree'
 }
 
-@Controller('tokens')
+@Controller()
 @ApiTags('Tokens')
 export class TokenController {
   constructor(

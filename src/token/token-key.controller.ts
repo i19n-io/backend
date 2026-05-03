@@ -24,7 +24,7 @@ import { ProjectService } from '~/project/project.service'
 import { TokenKey, TokenKeyCreate, TokenKeyListQuery } from '~/token/models'
 import { TokenKeyService } from '~/token/token-key.service'
 
-@Controller('tokens')
+@Controller()
 @ApiTags('Tokens')
 export class TokenKeyController {
   constructor(
