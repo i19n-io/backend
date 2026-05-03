@@ -3,8 +3,14 @@ import { randomUUID } from 'node:crypto'
 import { Injectable } from '@nestjs/common'
 import { eq } from 'drizzle-orm'
 
-import { DatabaseService, projectTable } from '~/core/database'
+import {
+  DatabaseService,
+  projectTable,
+  type ProjectSelect,
+} from '~/core/database'
 
+import { AccountService } from '~/account/account.service'
+import type { Account } from '~/account/models'
 import {
   Project,
   type ProjectCreate,
@@ -32,7 +38,10 @@ type ProjectUpdateResult =
 
 @Injectable()
 export class ProjectService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly accountService: AccountService,
+  ) {}
 
   // TODO: implement pagination
   async findMany() {
@@ -41,7 +50,7 @@ export class ProjectService {
       orderBy: (t, { desc }) => desc(t.created),
     })
 
-    return r.map(v => new Project(v))
+    return this.withAuthors(r)
   }
 
   async findOne(id: string) {
@@ -49,7 +58,7 @@ export class ProjectService {
       where: (t, { eq }) => eq(t.id, id),
     })
 
-    if (r) return new Project(r)
+    if (r) return this.withAuthor(r)
   }
 
   async create(dto: ProjectCreate): Promise<ProjectCreateResult> {
@@ -68,7 +77,7 @@ export class ProjectService {
       return { ok: false, error: 'ALREADY_EXISTS' }
     }
 
-    return { ok: true, data: new Project(created) }
+    return { ok: true, data: await this.withAuthor(created) }
   }
 
   async update(id: string, dto: ProjectUpdate): Promise<ProjectUpdateResult> {
@@ -94,6 +103,36 @@ export class ProjectService {
       return { ok: false, error: 'NOT_FOUND' }
     }
 
-    return { ok: true, status: 'UPDATED', data: new Project(updated) }
+    return {
+      ok: true,
+      status: 'UPDATED',
+      data: await this.withAuthor(updated),
+    }
+  }
+
+  /** FK on project.author_id guarantees the row exists; throw otherwise. */
+  private async withAuthor(row: ProjectSelect): Promise<Project> {
+    const author = await this.accountService.findOneById(row.authorId)
+    if (!author) {
+      throw new Error(`Author ${row.authorId} missing for project ${row.id}`)
+    }
+
+    return new Project({ ...row, author })
+  }
+
+  private async withAuthors(rows: ProjectSelect[]): Promise<Project[]> {
+    if (rows.length === 0) return []
+
+    const unique = [...new Set(rows.map(r => r.authorId))]
+    const authors = await this.accountService.findManyByIds(unique)
+    const byId = new Map<string, Account>(authors.map(a => [a.id, a]))
+
+    return rows.map(row => {
+      const author = byId.get(row.authorId)
+      if (!author) {
+        throw new Error(`Author ${row.authorId} missing for project ${row.id}`)
+      }
+      return new Project({ ...row, author })
+    })
   }
 }

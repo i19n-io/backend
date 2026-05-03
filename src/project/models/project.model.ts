@@ -1,37 +1,43 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { UUIDResolver } from 'graphql-scalars'
+
+import { ApiPropertyUuid } from '~/core/proto/helpers'
 
 import { Account } from '~/account/models'
 import { toDate } from '~/helpers/to-date'
 
 @ObjectType()
 export class Project {
+  @ApiPropertyUuid()
   @Field(() => UUIDResolver)
   readonly id!: string
 
+  @ApiProperty()
   @Field()
   readonly name!: string
 
+  @ApiProperty()
   @Field()
   readonly defaultLang!: string
 
+  @ApiPropertyUuid()
   @Field(() => UUIDResolver)
   readonly authorId!: string
 
-  /**
-   * The value is resolved at the GraphQL level and will always be `undefined`
-   * at the application level. That's why we use the `private` modifier here.
-   * @todo Add link to `author` field resolver
-   */
+  @ApiProperty({ type: () => Account })
   @Field(() => Account)
-  private readonly author!: Account
+  readonly author!: Account
 
+  @ApiProperty({ type: Date })
   @Field(() => Date)
   readonly created!: Date
 
+  @ApiProperty({ type: Date })
   @Field(() => Date)
   readonly updated!: Date
 
+  @ApiPropertyOptional({ type: Date })
   @Field(() => Date, { nullable: true })
   readonly deleted?: Date
 

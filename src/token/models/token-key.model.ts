@@ -1,17 +1,24 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { ApiProperty } from '@nestjs/swagger'
 import { UUIDResolver } from 'graphql-scalars'
+
+import { ApiPropertyUuid, ApiPropertyUuidOptional } from '~/core/proto/helpers'
 
 @ObjectType()
 export class TokenKey {
+  @ApiPropertyUuid()
   @Field(() => UUIDResolver)
   readonly id!: string
 
+  @ApiPropertyUuid()
   @Field(() => UUIDResolver)
   readonly projectId!: string
 
+  @ApiPropertyUuidOptional()
   @Field(() => UUIDResolver, { nullable: true })
   readonly parentId?: string
 
+  @ApiProperty()
   @Field()
   readonly key!: string
 
