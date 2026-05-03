@@ -1,5 +1,5 @@
 import { Controller, Get, NotFoundException, Query } from '@nestjs/common'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiTags } from '@nestjs/swagger'
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 import { DatabaseService, type TokenKeySelect } from '~/core/database'
@@ -39,6 +39,7 @@ class QueryParametersInput {
 }
 
 @Controller('tokens')
+@ApiTags('Tokens')
 export class TokenController {
   constructor(
     private readonly db: DatabaseService,
