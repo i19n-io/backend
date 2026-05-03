@@ -49,10 +49,10 @@ describe('TokenKey (REST)', () => {
       })
     })
 
-    test('200 returns every key in project when no parentId', async () => {
+    test('200 returns every key in project when no parent', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys?projectId=${project.id}`,
+        url: `/tokens/keys?project=${project.id}`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -61,10 +61,10 @@ describe('TokenKey (REST)', () => {
       expect(ids).toEqual([topA.id, topB.id, childA1.id, childA2.id].sort())
     })
 
-    test('200 returns only top-level keys when parentId=null', async () => {
+    test('200 returns only top-level keys when parent=null', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys?projectId=${project.id}&parentId=null`,
+        url: `/tokens/keys?project=${project.id}&parent=null`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -74,10 +74,10 @@ describe('TokenKey (REST)', () => {
       expect(body.every(k => k.parentId === undefined)).toBe(true)
     })
 
-    test('200 returns only top-level keys when parentId is empty', async () => {
+    test('200 returns only top-level keys when parent is empty', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys?projectId=${project.id}&parentId=`,
+        url: `/tokens/keys?project=${project.id}&parent=`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -86,10 +86,10 @@ describe('TokenKey (REST)', () => {
       expect(ids).toEqual([topA.id, topB.id].sort())
     })
 
-    test('200 returns children when parentId=<uuid>', async () => {
+    test('200 returns children when parent=<uuid>', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys?projectId=${project.id}&parentId=${topA.id}`,
+        url: `/tokens/keys?project=${project.id}&parent=${topA.id}`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -102,7 +102,7 @@ describe('TokenKey (REST)', () => {
     test('200 returns empty array when parent has no children', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys?projectId=${project.id}&parentId=${topB.id}`,
+        url: `/tokens/keys?project=${project.id}&parent=${topB.id}`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -118,7 +118,7 @@ describe('TokenKey (REST)', () => {
 
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys?projectId=${empty.id}`,
+        url: `/tokens/keys?project=${empty.id}`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -128,30 +128,30 @@ describe('TokenKey (REST)', () => {
     test('404 when project does not exist', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys?projectId=${randomUUID()}`,
+        url: `/tokens/keys?project=${randomUUID()}`,
       })
 
       expect(r.statusCode).toBe(404)
     })
 
-    test('400 when projectId is missing', async () => {
+    test('400 when project is missing', async () => {
       const r = await app.inject({ method: 'GET', url: '/tokens/keys' })
       expect(r.statusCode).toBe(400)
     })
 
-    test('400 when projectId is not a UUID', async () => {
+    test('400 when project is not a UUID', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: '/tokens/keys?projectId=not-a-uuid',
+        url: '/tokens/keys?project=not-a-uuid',
       })
 
       expect(r.statusCode).toBe(400)
     })
 
-    test('400 when parentId is not a UUID and not "null"', async () => {
+    test('400 when parent is not a UUID and not "null"', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys?projectId=${project.id}&parentId=banana`,
+        url: `/tokens/keys?project=${project.id}&parent=banana`,
       })
 
       expect(r.statusCode).toBe(400)
@@ -168,7 +168,7 @@ describe('TokenKey (REST)', () => {
     test('200 returns the key when present in project', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${key.id}?projectId=${project.id}`,
+        url: `/tokens/keys/${key.id}?project=${project.id}`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -182,7 +182,7 @@ describe('TokenKey (REST)', () => {
     test('404 when id does not exist', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${randomUUID()}?projectId=${project.id}`,
+        url: `/tokens/keys/${randomUUID()}?project=${project.id}`,
       })
 
       expect(r.statusCode).toBe(404)
@@ -197,22 +197,22 @@ describe('TokenKey (REST)', () => {
 
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${key.id}?projectId=${otherProject.id}`,
+        url: `/tokens/keys/${key.id}?project=${otherProject.id}`,
       })
 
       expect(r.statusCode).toBe(404)
     })
 
-    test('404 when projectId does not exist', async () => {
+    test('404 when project does not exist', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${key.id}?projectId=${randomUUID()}`,
+        url: `/tokens/keys/${key.id}?project=${randomUUID()}`,
       })
 
       expect(r.statusCode).toBe(404)
     })
 
-    test('400 when projectId is missing', async () => {
+    test('400 when project is missing', async () => {
       const r = await app.inject({
         method: 'GET',
         url: `/tokens/keys/${key.id}`,
@@ -221,10 +221,10 @@ describe('TokenKey (REST)', () => {
       expect(r.statusCode).toBe(400)
     })
 
-    test('400 when projectId is not a UUID', async () => {
+    test('400 when project is not a UUID', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${key.id}?projectId=not-a-uuid`,
+        url: `/tokens/keys/${key.id}?project=not-a-uuid`,
       })
 
       expect(r.statusCode).toBe(400)
@@ -233,7 +233,7 @@ describe('TokenKey (REST)', () => {
     test('400 when id is not a UUID', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/not-a-uuid?projectId=${project.id}`,
+        url: `/tokens/keys/not-a-uuid?project=${project.id}`,
       })
 
       expect(r.statusCode).toBe(400)
@@ -254,7 +254,7 @@ describe('TokenKey (REST)', () => {
     test('201 with position=end at top level', async ({ task }) => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: { key: `end_${task.id}`, position: 'end' },
       })
 
@@ -269,7 +269,7 @@ describe('TokenKey (REST)', () => {
     test('201 with position=start at top level', async ({ task }) => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: { key: `start_${task.id}`, position: 'start' },
       })
 
@@ -283,7 +283,7 @@ describe('TokenKey (REST)', () => {
 
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: {
           key: `after_${task.id}`,
           position: 'after',
@@ -301,7 +301,7 @@ describe('TokenKey (REST)', () => {
 
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: {
           key: `child_${task.id}`,
           position: 'end',
@@ -329,7 +329,7 @@ describe('TokenKey (REST)', () => {
       for (const label of labels) {
         const r = await app.inject({
           method: 'POST',
-          url: `/tokens/keys?projectId=${p.id}`,
+          url: `/tokens/keys?project=${p.id}`,
           payload: { key: label, position: 'end' },
         })
         expect(r.statusCode).toBe(201)
@@ -337,7 +337,7 @@ describe('TokenKey (REST)', () => {
 
       const list = await app.inject({
         method: 'GET',
-        url: `/tokens/keys?projectId=${p.id}&parentId=null`,
+        url: `/tokens/keys?project=${p.id}&parent=null`,
       })
       expect(list.statusCode).toBe(200)
       expect(list.json<TokenKey[]>().map(k => k.key)).toEqual(labels)
@@ -346,7 +346,7 @@ describe('TokenKey (REST)', () => {
     test('404 when project does not exist', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${randomUUID()}`,
+        url: `/tokens/keys?project=${randomUUID()}`,
         payload: { key: 'orphan', position: 'end' },
       })
       expect(r.statusCode).toBe(404)
@@ -355,7 +355,7 @@ describe('TokenKey (REST)', () => {
     test('404 when parentId does not exist in project', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: {
           key: 'child-of-ghost',
           position: 'end',
@@ -375,7 +375,7 @@ describe('TokenKey (REST)', () => {
 
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: {
           key: 'cross-project-child',
           position: 'end',
@@ -390,14 +390,14 @@ describe('TokenKey (REST)', () => {
 
       const first = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload,
       })
       expect(first.statusCode).toBe(201)
 
       const second = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload,
       })
       expect(second.statusCode).toBe(409)
@@ -415,7 +415,7 @@ describe('TokenKey (REST)', () => {
       // child of `otherParent` is not a sibling at top level
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: {
           key: `bad-after_${task.id}`,
           position: 'after',
@@ -425,7 +425,7 @@ describe('TokenKey (REST)', () => {
       expect(r.statusCode).toBe(400)
     })
 
-    test('400 when projectId is missing', async () => {
+    test('400 when project is missing', async () => {
       const r = await app.inject({
         method: 'POST',
         url: '/tokens/keys',
@@ -437,7 +437,7 @@ describe('TokenKey (REST)', () => {
     test('400 when position is missing', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: { key: 'no-position' },
       })
       expect(r.statusCode).toBe(400)
@@ -446,7 +446,7 @@ describe('TokenKey (REST)', () => {
     test('400 when position is invalid', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: { key: 'bad-position', position: 'middle' },
       })
       expect(r.statusCode).toBe(400)
@@ -455,7 +455,7 @@ describe('TokenKey (REST)', () => {
     test('400 when position=after but afterId is missing', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: { key: 'no-afterId', position: 'after' },
       })
       expect(r.statusCode).toBe(400)
@@ -464,16 +464,16 @@ describe('TokenKey (REST)', () => {
     test('400 when key is empty', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: { key: '', position: 'end' },
       })
       expect(r.statusCode).toBe(400)
     })
 
-    test('400 when projectId is not a UUID', async () => {
+    test('400 when project is not a UUID', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: '/tokens/keys?projectId=not-a-uuid',
+        url: '/tokens/keys?project=not-a-uuid',
         payload: { key: 'whatever', position: 'end' },
       })
       expect(r.statusCode).toBe(400)
@@ -482,7 +482,7 @@ describe('TokenKey (REST)', () => {
     test('400 when parentId is not a UUID', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys?projectId=${postProject.id}`,
+        url: `/tokens/keys?project=${postProject.id}`,
         payload: { key: 'bad-parent', position: 'end', parentId: 'nope' },
       })
       expect(r.statusCode).toBe(400)

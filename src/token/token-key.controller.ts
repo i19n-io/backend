@@ -36,7 +36,7 @@ export class TokenKeyController {
   @ApiOkResponse({ type: TokenKey, isArray: true })
   @ApiNotFoundResponse({ description: 'Project not found' })
   async findMany(
-    @Query() { projectId, parentId }: TokenKeyListQuery,
+    @Query() { project: projectId, parent: parentId }: TokenKeyListQuery,
   ): Promise<TokenKey[]> {
     const project = await this.projectService.findOne(projectId)
     if (!project) throw new NotFoundException('Project not found')
@@ -46,7 +46,7 @@ export class TokenKeyController {
 
   @Get('keys/:id')
   @ApiQuery({
-    name: 'projectId',
+    name: 'project',
     required: true,
     type: String,
     format: 'uuid',
@@ -55,7 +55,7 @@ export class TokenKeyController {
   @ApiNotFoundResponse({ description: 'Token key not found in project' })
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
-    @Query('projectId', ParseUUIDPipe) projectId: string,
+    @Query('project', ParseUUIDPipe) projectId: string,
   ): Promise<TokenKey> {
     const tokenKey = await this.tokenKeyService.findOne(projectId, id)
     if (!tokenKey) throw new NotFoundException('Token key not found in project')
@@ -65,7 +65,7 @@ export class TokenKeyController {
 
   @Post('keys')
   @ApiQuery({
-    name: 'projectId',
+    name: 'project',
     required: true,
     type: String,
     format: 'uuid',
@@ -79,7 +79,7 @@ export class TokenKeyController {
     description: 'Invalid body, or `afterId` does not match a sibling',
   })
   async create(
-    @Query('projectId', ParseUUIDPipe) projectId: string,
+    @Query('project', ParseUUIDPipe) projectId: string,
     @Body() dto: TokenKeyCreate,
   ): Promise<TokenKey> {
     const project = await this.projectService.findOne(projectId)

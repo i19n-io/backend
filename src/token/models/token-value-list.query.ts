@@ -9,7 +9,7 @@ import { ValidateAsLang, ValidateAsUuid } from '~/helpers/validators'
 export class TokenValueListQuery {
   @ApiPropertyUuid()
   @ValidateAsUuid()
-  readonly projectId!: string
+  readonly project!: string
 
   @ApiPropertyOptional({
     type: String,

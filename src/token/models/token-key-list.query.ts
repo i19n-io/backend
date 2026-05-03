@@ -9,7 +9,7 @@ import { ValidateAsUuid } from '~/helpers/validators'
 export class TokenKeyListQuery {
   @ApiPropertyUuid()
   @ValidateAsUuid()
-  readonly projectId!: string
+  readonly project!: string
 
   @ApiPropertyOptional({
     description:
@@ -26,5 +26,5 @@ export class TokenKeyListQuery {
       : (value as unknown),
   )
   @IsUUID(4, { message: '$property → Must be a UUID or "null"' })
-  readonly parentId?: string | null
+  readonly parent?: string | null
 }

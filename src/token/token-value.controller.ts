@@ -34,12 +34,12 @@ export class TokenValueController {
     private readonly tokenValueService: TokenValueService,
   ) {}
 
-  @Get('keys/:keyId/values')
+  @Get('keys/:id/values')
   @ApiOkResponse({ type: TokenValue, isArray: true })
   @ApiNotFoundResponse({ description: 'Token key not found in project' })
   async findMany(
-    @Param('keyId', ParseUUIDPipe) keyId: string,
-    @Query() { projectId, langs }: TokenValueListQuery,
+    @Param('id', ParseUUIDPipe) keyId: string,
+    @Query() { project: projectId, langs }: TokenValueListQuery,
   ): Promise<TokenValue[]> {
     const key = await this.tokenKeyService.findOne(projectId, keyId)
     if (!key) throw new NotFoundException('Token key not found in project')
@@ -47,9 +47,9 @@ export class TokenValueController {
     return this.tokenValueService.findMany({ keyId, langs })
   }
 
-  @Post('keys/:keyId/values')
+  @Post('keys/:id/values')
   @ApiQuery({
-    name: 'projectId',
+    name: 'project',
     required: true,
     type: String,
     format: 'uuid',
@@ -60,8 +60,8 @@ export class TokenValueController {
     description: 'Token value for the given (keyId, lang) already exists',
   })
   async create(
-    @Param('keyId', ParseUUIDPipe) keyId: string,
-    @Query('projectId', ParseUUIDPipe) projectId: string,
+    @Param('id', ParseUUIDPipe) keyId: string,
+    @Query('project', ParseUUIDPipe) projectId: string,
     @Body() dto: TokenValueCreate,
   ): Promise<TokenValue> {
     const key = await this.tokenKeyService.findOne(projectId, keyId)

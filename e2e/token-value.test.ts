@@ -45,7 +45,7 @@ describe('TokenValue (REST)', () => {
     test('200 with all values when no langs filter', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
+        url: `/tokens/keys/${key.id}/values?project=${project.id}`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -76,7 +76,7 @@ describe('TokenValue (REST)', () => {
     test('200 filtered by comma-separated langs', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${key.id}/values?projectId=${project.id}&langs=en,fr`,
+        url: `/tokens/keys/${key.id}/values?project=${project.id}&langs=en,fr`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -88,7 +88,7 @@ describe('TokenValue (REST)', () => {
     test('200 filtered by repeated langs param', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${key.id}/values?projectId=${project.id}&langs=en&langs=de`,
+        url: `/tokens/keys/${key.id}/values?project=${project.id}&langs=en&langs=de`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -100,7 +100,7 @@ describe('TokenValue (REST)', () => {
     test('200 with single lang returns one-item array', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${key.id}/values?projectId=${project.id}&langs=fr`,
+        url: `/tokens/keys/${key.id}/values?project=${project.id}&langs=fr`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -114,7 +114,7 @@ describe('TokenValue (REST)', () => {
       const empty = await makeTokenKey(app, project.id, { key: 'empty' })
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${empty.id}/values?projectId=${project.id}`,
+        url: `/tokens/keys/${empty.id}/values?project=${project.id}`,
       })
 
       expect(r.statusCode).toBe(200)
@@ -124,7 +124,7 @@ describe('TokenValue (REST)', () => {
     test('404 when keyId does not exist in project', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${randomUUID()}/values?projectId=${project.id}`,
+        url: `/tokens/keys/${randomUUID()}/values?project=${project.id}`,
       })
 
       expect(r.statusCode).toBe(404)
@@ -139,13 +139,13 @@ describe('TokenValue (REST)', () => {
 
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${key.id}/values?projectId=${otherProject.id}`,
+        url: `/tokens/keys/${key.id}/values?project=${otherProject.id}`,
       })
 
       expect(r.statusCode).toBe(404)
     })
 
-    test('400 when projectId is missing', async () => {
+    test('400 when project is missing', async () => {
       const r = await app.inject({
         method: 'GET',
         url: `/tokens/keys/${key.id}/values`,
@@ -154,10 +154,10 @@ describe('TokenValue (REST)', () => {
       expect(r.statusCode).toBe(400)
     })
 
-    test('400 when projectId is not a UUID', async () => {
+    test('400 when project is not a UUID', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${key.id}/values?projectId=not-a-uuid`,
+        url: `/tokens/keys/${key.id}/values?project=not-a-uuid`,
       })
 
       expect(r.statusCode).toBe(400)
@@ -166,7 +166,7 @@ describe('TokenValue (REST)', () => {
     test('400 when keyId is not a UUID', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/not-a-uuid/values?projectId=${project.id}`,
+        url: `/tokens/keys/not-a-uuid/values?project=${project.id}`,
       })
 
       expect(r.statusCode).toBe(400)
@@ -175,7 +175,7 @@ describe('TokenValue (REST)', () => {
     test('400 when langs contains invalid locale', async () => {
       const r = await app.inject({
         method: 'GET',
-        url: `/tokens/keys/${key.id}/values?projectId=${project.id}&langs=en,not_a_locale!`,
+        url: `/tokens/keys/${key.id}/values?project=${project.id}&langs=en,not_a_locale!`,
       })
 
       expect(r.statusCode).toBe(400)
@@ -192,7 +192,7 @@ describe('TokenValue (REST)', () => {
     test('201 with created value', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
+        url: `/tokens/keys/${key.id}/values?project=${project.id}`,
         payload: { lang: 'en', value: 'created en' },
       })
 
@@ -211,7 +211,7 @@ describe('TokenValue (REST)', () => {
 
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys/${k.id}/values?projectId=${project.id}`,
+        url: `/tokens/keys/${k.id}/values?project=${project.id}`,
         payload: { lang: 'en', value: 'second' },
       })
 
@@ -221,7 +221,7 @@ describe('TokenValue (REST)', () => {
     test('404 when keyId does not exist', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys/${randomUUID()}/values?projectId=${project.id}`,
+        url: `/tokens/keys/${randomUUID()}/values?project=${project.id}`,
         payload: { lang: 'en', value: 'orphan' },
       })
 
@@ -237,14 +237,14 @@ describe('TokenValue (REST)', () => {
 
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys/${key.id}/values?projectId=${otherProject.id}`,
+        url: `/tokens/keys/${key.id}/values?project=${otherProject.id}`,
         payload: { lang: 'es', value: 'wrong project' },
       })
 
       expect(r.statusCode).toBe(404)
     })
 
-    test('400 when projectId is missing', async () => {
+    test('400 when project is missing', async () => {
       const r = await app.inject({
         method: 'POST',
         url: `/tokens/keys/${key.id}/values`,
@@ -254,10 +254,10 @@ describe('TokenValue (REST)', () => {
       expect(r.statusCode).toBe(400)
     })
 
-    test('400 when projectId is not a UUID', async () => {
+    test('400 when project is not a UUID', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys/${key.id}/values?projectId=not-a-uuid`,
+        url: `/tokens/keys/${key.id}/values?project=not-a-uuid`,
         payload: { lang: 'en', value: 'whatever' },
       })
 
@@ -267,7 +267,7 @@ describe('TokenValue (REST)', () => {
     test('400 when keyId is not a UUID', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys/not-a-uuid/values?projectId=${project.id}`,
+        url: `/tokens/keys/not-a-uuid/values?project=${project.id}`,
         payload: { lang: 'en', value: 'whatever' },
       })
 
@@ -277,7 +277,7 @@ describe('TokenValue (REST)', () => {
     test('400 when body is empty', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
+        url: `/tokens/keys/${key.id}/values?project=${project.id}`,
         payload: {},
       })
 
@@ -287,7 +287,7 @@ describe('TokenValue (REST)', () => {
     test('400 when lang is missing', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
+        url: `/tokens/keys/${key.id}/values?project=${project.id}`,
         payload: { value: 'no lang' },
       })
 
@@ -297,7 +297,7 @@ describe('TokenValue (REST)', () => {
     test('400 when value is missing', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
+        url: `/tokens/keys/${key.id}/values?project=${project.id}`,
         payload: { lang: 'fr' },
       })
 
@@ -307,7 +307,7 @@ describe('TokenValue (REST)', () => {
     test('400 when lang is not a valid locale', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
+        url: `/tokens/keys/${key.id}/values?project=${project.id}`,
         payload: { lang: 'not_a_locale!', value: 'x' },
       })
 
@@ -317,7 +317,7 @@ describe('TokenValue (REST)', () => {
     test('400 when value is empty', async () => {
       const r = await app.inject({
         method: 'POST',
-        url: `/tokens/keys/${key.id}/values?projectId=${project.id}`,
+        url: `/tokens/keys/${key.id}/values?project=${project.id}`,
         payload: { lang: 'fr', value: '' },
       })
 
