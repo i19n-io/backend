@@ -1,7 +1,7 @@
 import { includeIgnoreFile } from '@eslint/compat'
 import * as eslint from '@eslint/js'
 import tsParser from '@typescript-eslint/parser'
-import * as vitest from '@vitest/eslint-plugin'
+import vitest from '@vitest/eslint-plugin'
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript'
 import consistentDefaultExportName from 'eslint-plugin-consistent-default-export-name'
 import { importX } from 'eslint-plugin-import-x'
