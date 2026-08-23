@@ -65,7 +65,7 @@
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.15.11",
     "@testcontainers/postgresql": "^11.11.0",
-    "@types/node": "^24.8.1",
+    "@types/node": "^24.13.3",
     "@types/passport-github": "^1.1.13",
     "@types/pg": "^8.23.1",
     "@types/supertest": "^6.0.3",
