@@ -63,7 +63,7 @@
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^11.2.1",
     "@swc/cli": "^0.6.0",
-    "@swc/core": "^1.15.11",
+    "@swc/core": "^1.16.1",
     "@testcontainers/postgresql": "^11.11.0",
     "@types/node": "^24.13.3",
     "@types/passport-github": "^1.1.13",
