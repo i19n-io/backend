@@ -12,8 +12,7 @@ type TokenValueCreateError = 'ALREADY_EXISTS'
 
 /** @todo Use universal result type */
 type TokenValueCreateResult =
-  | { ok: true; data: TokenValue }
-  | { ok: false; error: TokenValueCreateError }
+  { ok: true; data: TokenValue } | { ok: false; error: TokenValueCreateError }
 
 @Injectable()
 export class TokenValueService {

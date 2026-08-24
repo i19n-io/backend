@@ -16,8 +16,7 @@ type AccountCreateError = 'ALREADY_EXISTS'
 
 /** @todo Use universal result error type */
 type AccountCreateResult =
-  | { ok: true; data: Account }
-  | { ok: false; error: AccountCreateError }
+  { ok: true; data: Account } | { ok: false; error: AccountCreateError }
 
 @Injectable()
 export class AccountService {

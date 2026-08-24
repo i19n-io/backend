@@ -16,8 +16,7 @@ type ProjectCreateError = 'ALREADY_EXISTS'
 
 /** @todo Use universal result type */
 type ProjectCreateResult =
-  | { ok: true; data: Project }
-  | { ok: false; error: ProjectCreateError }
+  { ok: true; data: Project } | { ok: false; error: ProjectCreateError }
 
 /** @todo Use universal result error type */
 type ProjectUpdateStatus = 'UPDATED' | 'NOT_UPDATED'
